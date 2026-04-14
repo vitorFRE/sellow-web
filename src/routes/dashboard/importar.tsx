@@ -1,16 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 
-import { SectionPlaceholder } from "@/features/dashboard/pages/section-placeholder"
+import { ImportGoogleMapsPage } from "@/features/leads/pages/import-google-maps-page"
 
 export const Route = createFileRoute("/dashboard/importar")({
-  component: ImportarPage,
+  component: ImportGoogleMapsPage,
 })
-
-function ImportarPage() {
-  return (
-    <SectionPlaceholder
-      title="Importar"
-      description="Importar leads (Google Sheets, CSV, etc.)."
-    />
-  )
-}

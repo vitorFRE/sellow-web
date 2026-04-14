@@ -2,6 +2,10 @@ import { HttpError } from "@/features/auth/api/auth-api"
 import { authorizedFetch } from "@/features/auth/lib/authorized-fetch"
 import { getApiBaseUrl } from "@/shared/config/api-base"
 import type { LeadsListResponse } from "@/features/leads/types/lead"
+import type {
+  GoogleMapsImportPayload,
+  GoogleMapsImportResult,
+} from "@/features/leads/types/google-maps-import"
 
 async function parseJson<T>(res: Response): Promise<T> {
   if (!res.ok) {
@@ -42,4 +46,17 @@ export async function deleteLead(id: string): Promise<string> {
   )
   const body = await parseJson<{ data: string }>(res)
   return body.data
+}
+
+export async function importGoogleMapsLeads(
+  payload: GoogleMapsImportPayload
+): Promise<GoogleMapsImportResult> {
+  const res = await authorizedFetch(
+    `${getApiBaseUrl()}/leads/import/google-maps`,
+    {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }
+  )
+  return parseJson<GoogleMapsImportResult>(res)
 }
