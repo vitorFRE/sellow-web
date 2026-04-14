@@ -1,16 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 
-import { SectionPlaceholder } from "@/features/dashboard/pages/section-placeholder"
+import { LeadsListPage } from "@/features/leads/pages/leads-list-page"
 
 export const Route = createFileRoute("/dashboard/leads")({
-  component: LeadsPage,
+  component: LeadsListPage,
 })
-
-function LeadsPage() {
-  return (
-    <SectionPlaceholder
-      title="Leads"
-      description="Lista única com filtros — importação Google e cadastro manual."
-    />
-  )
-}

@@ -8,7 +8,10 @@ export async function authorizedFetch(
 ): Promise<Response> {
   const accessToken = tokenStorage.getAccess()
   const headers = new Headers(init.headers ?? {})
-  headers.set("Content-Type", "application/json")
+  const method = (init.method ?? "GET").toUpperCase()
+  if (method !== "GET" && method !== "HEAD") {
+    headers.set("Content-Type", "application/json")
+  }
   if (accessToken) headers.set("Authorization", `Bearer ${accessToken}`)
 
   let res = await fetch(url, { ...init, headers })

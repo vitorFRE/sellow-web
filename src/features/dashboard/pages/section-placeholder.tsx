@@ -8,10 +8,12 @@ export function SectionPlaceholder({
   description,
 }: SectionPlaceholderProps) {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex min-w-0 flex-col gap-2">
       <h1 className="text-xl font-medium">{title}</h1>
       {description ? (
-        <p className="text-sm text-muted-foreground">{description}</p>
+        <p className="wrap-break-word text-sm text-muted-foreground">
+          {description}
+        </p>
       ) : null}
     </div>
   )
