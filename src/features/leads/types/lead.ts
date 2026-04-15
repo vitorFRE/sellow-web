@@ -1,4 +1,5 @@
 export type LeadStatus =
+  | "IMPORTED"
   | "NEW"
   | "CONTACTED"
   | "QUALIFYING"
@@ -16,6 +17,9 @@ export type Lead = {
   phone: string | null
   budget: string | number | null
   status: LeadStatus
+  lossReasonId?: string | null
+  lossReason?: string | null
+  lossReasonNote?: string | null
   source: string | null
   totalScore?: number | null
   reviewsCount?: number | null

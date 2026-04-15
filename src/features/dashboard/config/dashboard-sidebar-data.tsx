@@ -4,10 +4,8 @@ import {
   IconFileImport,
   IconHome,
   IconLayoutKanban,
-  IconLifebuoy,
   IconPhoto,
   IconReceipt,
-  IconSend,
   IconSettings,
   IconTemplate,
   IconUsers,
@@ -63,16 +61,6 @@ export const dashboardSidebarData = {
       url: "/dashboard/configuracoes",
       icon: <IconSettings />,
     },
-    {
-      title: "Suporte",
-      url: "#",
-      icon: <IconLifebuoy />,
-    },
-    {
-      title: "Enviar feedback",
-      url: "#",
-      icon: <IconSend />,
-    },
   ],
   projects: [
     {
@@ -86,7 +74,5 @@ export const dashboardSidebarData = {
       icon: <IconPhoto />,
     },
   ],
-  brandIcon: (
-    <span className="text-sm font-semibold tracking-tight">S</span>
-  ),
+  brandIcon: <span className="text-sm font-semibold tracking-tight">S</span>,
 }

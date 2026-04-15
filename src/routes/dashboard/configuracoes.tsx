@@ -1,16 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router"
 
-import { SectionPlaceholder } from "@/features/dashboard/pages/section-placeholder"
+import { ConfiguracoesSettingsPage } from "@/features/settings/pages/configuracoes-settings-page"
 
 export const Route = createFileRoute("/dashboard/configuracoes")({
   component: ConfiguracoesPage,
 })
 
 function ConfiguracoesPage() {
-  return (
-    <SectionPlaceholder
-      title="Configurações"
-      description="Etapas do funil, origens e preferências da importação."
-    />
-  )
+  return <ConfiguracoesSettingsPage />
 }

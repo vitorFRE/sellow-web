@@ -44,7 +44,7 @@ export function LeadsListPage() {
   const deleteMutation = useMutation({
     mutationFn: deleteLead,
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: leadsListQueryKey })
+      await queryClient.invalidateQueries({ queryKey: ["leads"] })
       const len = query.data?.data.length ?? 0
       if (len <= 1 && pagination.pageIndex > 0) {
         setPagination((p) => ({ ...p, pageIndex: p.pageIndex - 1 }))

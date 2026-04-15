@@ -54,4 +54,5 @@ function Button({
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- buttonVariants usado em triggers (ex.: menu)
 export { Button }

@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils"
 import type { LeadStatus } from "@/features/leads/types/lead"
 
 const STYLES: Record<LeadStatus, string> = {
+  IMPORTED: "bg-zinc-500/15 text-zinc-700 dark:text-zinc-300",
   NEW: "bg-primary/15 text-primary",
   CONTACTED: "bg-muted text-muted-foreground",
   QUALIFYING: "bg-amber-500/15 text-amber-800 dark:text-amber-400",
@@ -13,6 +14,7 @@ const STYLES: Record<LeadStatus, string> = {
 }
 
 const LABELS: Record<LeadStatus, string> = {
+  IMPORTED: "Importado",
   NEW: "Novo",
   CONTACTED: "Contatado",
   QUALIFYING: "Qualificação",

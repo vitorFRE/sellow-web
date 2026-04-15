@@ -1,3 +1,5 @@
+import { IconCircleCheck } from "@tabler/icons-react"
+
 import {
   Dialog,
   DialogContent,
@@ -27,8 +29,13 @@ export function ImportResultDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="gap-6 border bg-card text-center shadow-lg sm:max-w-md">
-        <DialogHeader className="gap-2 text-center sm:text-center">
-          <DialogTitle className="text-lg">Importação concluída</DialogTitle>
+        <DialogHeader className="gap-4 text-center sm:text-center">
+          <div className="mx-auto flex size-14 items-center justify-center rounded-3xl bg-primary/12 text-primary">
+            <IconCircleCheck className="size-8" aria-hidden />
+          </div>
+          <DialogTitle className="text-lg font-semibold">
+            Importação concluída
+          </DialogTitle>
         </DialogHeader>
         <div className="grid grid-cols-3 gap-4 px-2">
           <div className="flex flex-col items-center gap-1">

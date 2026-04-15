@@ -1,3 +1,5 @@
+import { IconTable } from "@tabler/icons-react"
+
 import type { GoogleMapsImportItem } from "@/features/leads/types/google-maps-import"
 import {
   Table,
@@ -24,19 +26,27 @@ export function ImportItemsPreview({ items }: Props) {
   const rest = items.length - shown.length
 
   return (
-    <div className="flex flex-col gap-2">
-      <p className="text-sm text-muted-foreground">
-        Pré-visualização:{" "}
-        <span className="font-medium text-foreground">{items.length}</span>{" "}
-        {items.length === 1 ? "item" : "itens"}
-        {rest > 0 ? (
-          <span className="text-muted-foreground">
-            {" "}
-            (mostrando os primeiros {PREVIEW_LIMIT})
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <p className="flex items-center gap-2 text-sm text-muted-foreground">
+          <span className="flex size-8 items-center justify-center rounded-xl bg-muted/80 text-foreground">
+            <IconTable className="size-4" aria-hidden />
           </span>
-        ) : null}
-      </p>
-      <div className="max-h-[min(420px,50vh)] overflow-auto rounded-4xl border bg-card">
+          <span>
+            <span className="font-medium text-foreground">
+              {items.length.toLocaleString("pt-BR")}
+            </span>{" "}
+            {items.length === 1 ? "item válido" : "itens válidos"}
+            {rest > 0 ? (
+              <span className="text-muted-foreground">
+                {" "}
+                (primeiros {PREVIEW_LIMIT} na tabela)
+              </span>
+            ) : null}
+          </span>
+        </p>
+      </div>
+      <div className="max-h-[min(420px,50vh)] overflow-auto rounded-3xl border border-border/80 bg-card/80 shadow-inner">
         <Table>
           <TableHeader>
             <TableRow>
