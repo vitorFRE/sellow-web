@@ -1,3 +1,4 @@
+import * as React from "react"
 import { useDraggable } from "@dnd-kit/react"
 
 import { cn } from "@/lib/utils"
@@ -7,17 +8,39 @@ import { PipelineLeadCardContent } from "@/features/pipeline/components/pipeline
 export function PipelineKanbanCard({
   lead,
   columnStatus,
+  onOpenDetail,
 }: {
   lead: Lead
   columnStatus: LeadStatus
+  onOpenDetail?: (lead: Lead, columnStatus: LeadStatus) => void
 }) {
+  const sessionHadDrag = React.useRef(false)
   const { ref, isDragging } = useDraggable({
     id: lead.id,
     data: { status: columnStatus },
   })
 
+  React.useEffect(() => {
+    if (isDragging) sessionHadDrag.current = true
+  }, [isDragging])
+
   return (
-    <div ref={ref} className="min-w-0 shrink-0">
+    <div
+      ref={ref}
+      className="min-w-0 shrink-0"
+      onPointerDown={() => {
+        sessionHadDrag.current = false
+      }}
+      onClick={() => {
+        if (!onOpenDetail) return
+        if (sessionHadDrag.current) {
+          sessionHadDrag.current = false
+          return
+        }
+        onOpenDetail(lead, columnStatus)
+      }}
+      role="presentation"
+    >
       <PipelineLeadCardContent
         lead={lead}
         className={cn(

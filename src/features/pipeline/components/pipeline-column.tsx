@@ -15,6 +15,7 @@ type PipelineColumnProps = {
   leads: Lead[]
   meta: LeadsListMeta | undefined
   isLoading: boolean
+  onOpenLeadDetail?: (lead: Lead, columnStatus: LeadStatus) => void
 }
 
 export function PipelineColumn({
@@ -23,6 +24,7 @@ export function PipelineColumn({
   leads,
   meta,
   isLoading,
+  onOpenLeadDetail,
 }: PipelineColumnProps) {
   const { ref, isDropTarget } = useDroppable({ id: status })
   const total = meta?.total ?? leads.length
@@ -60,6 +62,7 @@ export function PipelineColumn({
               key={lead.id}
               lead={lead}
               columnStatus={status}
+              onOpenDetail={onOpenLeadDetail}
             />
           ))
         )}

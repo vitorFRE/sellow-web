@@ -68,7 +68,9 @@ export function LossReasonCreateDialog({
               />
             </label>
             <label className="grid gap-1.5 text-sm font-medium">
-              <span className="text-muted-foreground">Descrição (opcional)</span>
+              <span className="text-muted-foreground">
+                Descrição (opcional)
+              </span>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -76,7 +78,7 @@ export function LossReasonCreateDialog({
                 maxLength={2000}
                 disabled={isPending}
                 className={cn(
-                  "min-h-[5rem] w-full resize-y rounded-4xl border border-input bg-input/30 px-3 py-2 text-sm outline-none transition-colors",
+                  "min-h-20 w-full resize-y rounded-4xl border border-input bg-input/30 px-3 py-2 text-sm transition-colors outline-none",
                   "placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                 )}
               />

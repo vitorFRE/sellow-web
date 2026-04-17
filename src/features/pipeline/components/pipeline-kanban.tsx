@@ -15,6 +15,7 @@ import {
   PIPELINE_COLUMN_LABELS,
   PIPELINE_STATUSES,
 } from "@/features/pipeline/config/pipeline-columns"
+import { LeadDetailSheet } from "@/features/lead-detail/components/lead-detail-sheet"
 import { PipelineLostReasonDialog } from "@/features/pipeline/components/pipeline-lost-reason-dialog"
 import { usePipelineBoardQueries } from "@/features/pipeline/hooks/use-pipeline-board-queries"
 import { usePipelineMoveLead } from "@/features/pipeline/hooks/use-pipeline-move-lead"
@@ -30,6 +31,18 @@ export function PipelineKanban() {
     usePipelineBoardQueries()
   const moveLead = usePipelineMoveLead()
   const [lostPending, setLostPending] = React.useState<LostPending | null>(null)
+  const [leadDetail, setLeadDetail] = React.useState<{
+    lead: Lead
+    columnStatus: LeadStatus
+  } | null>(null)
+
+  const openLeadDetail = React.useCallback((lead: Lead, columnStatus: LeadStatus) => {
+    setLeadDetail({ lead, columnStatus })
+  }, [])
+
+  const closeLeadDetail = React.useCallback((open: boolean) => {
+    if (!open) setLeadDetail(null)
+  }, [])
 
   React.useEffect(() => {
     if (!isError || !error) return
@@ -114,6 +127,7 @@ export function PipelineKanban() {
               leads={byStatus[status]}
               meta={metaByStatus[status]}
               isLoading={queries[i]?.isLoading ?? false}
+              onOpenLeadDetail={openLeadDetail}
             />
           ))}
         </div>
@@ -138,6 +152,13 @@ export function PipelineKanban() {
         }
         onCancel={() => setLostPending(null)}
         onConfirm={confirmLost}
+      />
+
+      <LeadDetailSheet
+        lead={leadDetail?.lead ?? null}
+        columnStatus={leadDetail?.columnStatus ?? null}
+        open={leadDetail != null}
+        onOpenChange={closeLeadDetail}
       />
     </DragDropProvider>
   )

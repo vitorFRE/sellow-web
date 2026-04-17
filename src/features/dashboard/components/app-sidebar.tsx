@@ -3,7 +3,6 @@ import { Link } from "@tanstack/react-router"
 
 import { dashboardSidebarData } from "@/features/dashboard/config/dashboard-sidebar-data"
 import { NavMain } from "@/features/dashboard/components/nav-main"
-import { NavProjects } from "@/features/dashboard/components/nav-projects"
 import { NavSecondary } from "@/features/dashboard/components/nav-secondary"
 import { NavUser } from "@/features/dashboard/components/nav-user"
 import { useAuthUser } from "@/features/auth/queries/auth-me-query"
@@ -47,7 +46,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={nav.navMain} />
-        <NavProjects projects={nav.projects} />
+        {/* <NavProjects projects={nav.projects} /> */}
         <NavSecondary items={nav.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
