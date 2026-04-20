@@ -20,25 +20,3 @@ export type LeadFollowUpView = {
   ownerLabel: string
   reminder?: string
 }
-
-export type LeadSiteProjectView = {
-  sitePackageLabel: string
-  sitePitchLine: string
-  siteScopeBullets: string[]
-  siteDeliverablesNote: string
-  siteStackNote: string
-}
-
-export type LeadDetailView = {
-  headline: string
-  pipelineStageLabel: string
-  temperatureLabel: "Frio" | "Morno" | "Quente"
-  sitePackageLabel: string
-  sitePitchLine: string
-  siteScopeBullets: string[]
-  siteDeliverablesNote: string
-  siteStackNote: string
-  activity: LeadActivityLogItem[]
-  notes: string[]
-  followUp: LeadFollowUpView
-}

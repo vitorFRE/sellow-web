@@ -8,6 +8,8 @@ import { toast } from "sonner"
 
 import { HttpError } from "@/features/auth/api/auth-api"
 import type { Lead, LeadStatus } from "@/features/leads/types/lead"
+import type { LeadListFilterState } from "@/features/leads/types/lead-list-query"
+import { LeadDetailSheet } from "@/features/lead-detail/components/lead-detail-sheet"
 import { PipelineCardDragPreview } from "@/features/pipeline/components/pipeline-card"
 import { PipelineColumn } from "@/features/pipeline/components/pipeline-column"
 import {
@@ -15,7 +17,6 @@ import {
   PIPELINE_COLUMN_LABELS,
   PIPELINE_STATUSES,
 } from "@/features/pipeline/config/pipeline-columns"
-import { LeadDetailSheet } from "@/features/lead-detail/components/lead-detail-sheet"
 import { PipelineLostReasonDialog } from "@/features/pipeline/components/pipeline-lost-reason-dialog"
 import { usePipelineBoardQueries } from "@/features/pipeline/hooks/use-pipeline-board-queries"
 import { usePipelineMoveLead } from "@/features/pipeline/hooks/use-pipeline-move-lead"
@@ -26,10 +27,14 @@ type LostPending = {
   name: string
 }
 
-export function PipelineKanban() {
+type Props = {
+  filters: LeadListFilterState
+}
+
+export function PipelineKanban({ filters }: Props) {
   const { byStatus, metaByStatus, isError, error, queries } =
-    usePipelineBoardQueries()
-  const moveLead = usePipelineMoveLead()
+    usePipelineBoardQueries(filters)
+  const moveLead = usePipelineMoveLead(filters)
   const [lostPending, setLostPending] = React.useState<LostPending | null>(null)
   const [leadDetail, setLeadDetail] = React.useState<{
     lead: Lead

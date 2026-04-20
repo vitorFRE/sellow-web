@@ -4,21 +4,44 @@ import * as React from "react"
 
 import { LeadDetailFollowUpPanel } from "@/features/lead-detail/components/lead-detail-follow-up-panel"
 import { LeadDetailNotesEditor } from "@/features/lead-detail/components/lead-detail-notes-editor"
-import type { LeadDetailView } from "@/features/lead-detail/types/lead-detail-view"
+import {
+  useLeadNotesQuery,
+  useSaveLeadNotesMutation,
+} from "@/features/lead-detail/hooks/use-lead-notes"
 
 type Props = {
-  detail: LeadDetailView
+  leadId: string
 }
 
-export function LeadDetailTrackingTab({ detail }: Props) {
-  const notesBaseline = detail.notes.join("\n\n")
+export function LeadDetailTrackingTab({ leadId }: Props) {
+  const notesQuery = useLeadNotesQuery(leadId)
+  const saveNotes = useSaveLeadNotesMutation(leadId)
 
-  const [notesSaved, setNotesSaved] = React.useState(notesBaseline)
-  const [notesDraft, setNotesDraft] = React.useState(notesBaseline)
+  const serverBody = notesQuery.data?.body ?? ""
+  const [notesSaved, setNotesSaved] = React.useState(serverBody)
+  const [notesDraft, setNotesDraft] = React.useState(serverBody)
 
-  const [followSaved, setFollowSaved] = React.useState(detail.followUp)
+  React.useEffect(() => {
+    if (!notesQuery.isSuccess) return
+    setNotesSaved((prevSaved) => {
+      if (prevSaved === serverBody) return prevSaved
+      setNotesDraft((prevDraft) =>
+        prevDraft === prevSaved ? serverBody : prevDraft
+      )
+      return serverBody
+    })
+  }, [notesQuery.isSuccess, serverBody])
 
   const notesDirty = notesDraft !== notesSaved
+
+  const handleSaveNotes = () => {
+    saveNotes.mutate(notesDraft, {
+      onSuccess: (data) => {
+        setNotesSaved(data.body)
+        setNotesDraft(data.body)
+      },
+    })
+  }
 
   return (
     <div className="space-y-8">
@@ -26,11 +49,13 @@ export function LeadDetailTrackingTab({ detail }: Props) {
         value={notesDraft}
         onChange={setNotesDraft}
         dirty={notesDirty}
-        onSave={() => setNotesSaved(notesDraft)}
+        isLoading={notesQuery.isLoading}
+        isSaving={saveNotes.isPending}
+        onSave={handleSaveNotes}
         onCancel={() => setNotesDraft(notesSaved)}
       />
 
-      <LeadDetailFollowUpPanel saved={followSaved} onSavedChange={setFollowSaved} />
+      <LeadDetailFollowUpPanel leadId={leadId} />
     </div>
   )
 }

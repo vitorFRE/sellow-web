@@ -1,6 +1,13 @@
 import { IconBell, IconCalendarClock, IconUser } from "@tabler/icons-react"
 
 import { Input } from "@/components/ui/input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 import {
   fromDatetimeLocalInputValue,
@@ -41,25 +48,29 @@ export function LeadDetailFollowUpFields({ value, onChange, className }: Props) 
         ) : null}
       </label>
 
-      <label className="grid gap-1.5 text-sm font-medium">
+      <div className="grid gap-1.5 text-sm font-medium">
         <span className="text-muted-foreground">Canal</span>
-        <select
+        <Select
           value={value.channel}
-          onChange={(e) =>
-            onChange({ ...value, channel: e.target.value as LeadFollowUpView["channel"] })
+          onValueChange={(v) =>
+            onChange({
+              ...value,
+              channel: v as LeadFollowUpView["channel"],
+            })
           }
-          className={cn(
-            "h-9 w-full rounded-4xl border border-input bg-input/30 px-3 text-sm outline-none",
-            "focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-          )}
         >
-          {FOLLOW_UP_CHANNELS.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
-      </label>
+          <SelectTrigger className="w-full">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {FOLLOW_UP_CHANNELS.map((c) => (
+              <SelectItem key={c} value={c}>
+                {c}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
 
       <label className="grid gap-1.5 text-sm font-medium">
         <span className="flex items-center gap-1.5 text-muted-foreground">
@@ -70,6 +81,7 @@ export function LeadDetailFollowUpFields({ value, onChange, className }: Props) 
           value={value.ownerLabel}
           onChange={(e) => onChange({ ...value, ownerLabel: e.target.value })}
           placeholder="Quem fará o contato"
+          maxLength={500}
         />
       </label>
 
@@ -82,7 +94,7 @@ export function LeadDetailFollowUpFields({ value, onChange, className }: Props) 
           value={value.reminder ?? ""}
           onChange={(e) => onChange({ ...value, reminder: e.target.value || undefined })}
           rows={3}
-          maxLength={2000}
+          maxLength={500}
           placeholder="Ex.: demonstrar protótipo da home…"
           className={cn(
             "min-h-18 w-full resize-y rounded-4xl border border-input bg-input/30 px-3 py-2 text-sm outline-none",

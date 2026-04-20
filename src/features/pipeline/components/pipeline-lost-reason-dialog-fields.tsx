@@ -1,8 +1,17 @@
 import type { UseQueryResult } from "@tanstack/react-query"
 
 import { HttpError } from "@/features/auth/api/auth-api"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import type { LossReason } from "@/features/settings/types/loss-reason"
 import { cn } from "@/lib/utils"
+
+const NO_REASON = "__none__"
 
 type Query = UseQueryResult<LossReason[], Error>
 
@@ -58,28 +67,36 @@ export function PipelineLostReasonDialogFields({
     )
   }
 
+  const selectValue = reasonId === "" ? NO_REASON : reasonId
+
   return (
     <>
-      <label className="grid gap-1.5 text-sm font-medium">
+      <div className="grid gap-1.5 text-sm font-medium">
         Motivo de perda
-        <select
-          required
-          value={reasonId}
+        <Select
+          value={selectValue}
           disabled={isPending}
-          onChange={(e) => onReasonChange(e.target.value)}
-          className={cn(
-            "h-9 w-full rounded-4xl border border-input bg-input/30 px-3 py-1 text-sm outline-none transition-colors",
-            "focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50"
-          )}
+          required
+          onValueChange={(v) =>
+            onReasonChange(v === NO_REASON ? "" : v)
+          }
         >
-          <option value="">Selecione…</option>
-          {reasonsQuery.data.map((r) => (
-            <option key={r.id} value={r.id}>
-              {r.name}
-            </option>
-          ))}
-        </select>
-      </label>
+          <SelectTrigger
+            className="w-full"
+            aria-required
+          >
+            <SelectValue placeholder="Selecione…" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={NO_REASON}>Selecione…</SelectItem>
+            {reasonsQuery.data.map((r) => (
+              <SelectItem key={r.id} value={r.id}>
+                {r.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
       <label className="grid gap-1.5 text-sm font-medium">
         <span className="text-muted-foreground">Nota (opcional)</span>
         <textarea
@@ -90,7 +107,7 @@ export function PipelineLostReasonDialogFields({
           disabled={isPending}
           placeholder="Detalhes adicionais sobre a perda"
           className={cn(
-            "min-h-[4rem] w-full resize-y rounded-4xl border border-input bg-input/30 px-3 py-2 text-sm outline-none transition-colors",
+            "min-h-16 w-full resize-y rounded-4xl border border-input bg-input/30 px-3 py-2 text-sm outline-none transition-colors",
             "placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
           )}
         />

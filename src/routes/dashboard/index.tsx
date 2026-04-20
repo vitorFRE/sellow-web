@@ -1,16 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router"
 
-import { SectionPlaceholder } from "@/features/dashboard/pages/section-placeholder"
+import { DashboardHomePage } from "@/features/dashboard/pages/dashboard-home-page"
 
 export const Route = createFileRoute("/dashboard/")({
   component: InicioPage,
 })
 
 function InicioPage() {
-  return (
-    <SectionPlaceholder
-      title="Início"
-      description="Visão geral do dia: próximos follow-ups e o que precisa de atenção."
-    />
-  )
+  return <DashboardHomePage />
 }

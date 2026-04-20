@@ -21,16 +21,18 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 import {
   PIPELINE_COLUMN_LABELS,
   PIPELINE_STATUSES,
 } from "@/features/pipeline/config/pipeline-columns"
-
-const createLeadSelectClass = cn(
-  "h-9 w-full min-w-0 rounded-4xl border border-input bg-input/30 px-3 py-1 text-sm",
-  "outline-none transition-colors focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-)
 
 function firstFieldErrorMessage(
   errors: readonly unknown[]
@@ -225,22 +227,30 @@ export function CreateLeadForm({
           name="status"
           children={(field) => (
             <CreateLeadFieldShell label="Status" field={field}>
-              <select
-                id={field.name}
-                name={field.name}
-                className={createLeadSelectClass}
+              <Select
                 value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) =>
-                  field.handleChange(e.target.value as LeadStatus)
+                onValueChange={(v) =>
+                  field.handleChange(v as LeadStatus)
                 }
               >
-                {PIPELINE_STATUSES.map((s) => (
-                  <option key={s} value={s}>
-                    {PIPELINE_COLUMN_LABELS[s]}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger
+                  id={field.name}
+                  className="w-full min-w-0"
+                  aria-invalid={
+                    field.state.meta.isTouched && !field.state.meta.isValid
+                  }
+                  onBlur={field.handleBlur}
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {PIPELINE_STATUSES.map((s) => (
+                    <SelectItem key={s} value={s}>
+                      {PIPELINE_COLUMN_LABELS[s]}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </CreateLeadFieldShell>
           )}
         />

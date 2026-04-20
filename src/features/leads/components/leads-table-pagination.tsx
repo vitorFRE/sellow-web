@@ -7,6 +7,13 @@ import {
 } from "@tabler/icons-react"
 
 import { Button } from "@/components/ui/button"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import type { Lead } from "@/features/leads/types/lead"
 
 type Props = {
@@ -34,22 +41,24 @@ export function LeadsTablePagination({ table, total }: Props) {
       </p>
 
       <div className="flex flex-wrap items-center gap-2 sm:justify-end">
-        <label className="flex items-center gap-2 text-sm text-muted-foreground">
-          Linhas
-          <select
-            className="h-9 rounded-4xl border border-input bg-input/30 px-3 text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-            value={pageSize}
-            onChange={(e) => {
-              table.setPageSize(Number(e.target.value))
-            }}
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <span className="whitespace-nowrap">Linhas</span>
+          <Select
+            value={String(pageSize)}
+            onValueChange={(v) => table.setPageSize(Number(v))}
           >
-            {PAGE_SIZES.map((n) => (
-              <option key={n} value={n}>
-                {n}
-              </option>
-            ))}
-          </select>
-        </label>
+            <SelectTrigger className="w-[4.5rem]" size="sm" aria-label="Linhas por página">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {PAGE_SIZES.map((n) => (
+                <SelectItem key={n} value={String(n)}>
+                  {n}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
         <div className="flex items-center gap-1">
           <Button

@@ -6,6 +6,10 @@ import type {
   LeadStatus,
   LeadsListResponse,
 } from "@/features/leads/types/lead"
+import type {
+  LeadSortBy,
+  LeadSortDir,
+} from "@/features/leads/types/lead-list-query"
 import type { CreateLeadRequestBody } from "@/features/leads/lib/build-create-lead-body"
 import type {
   GoogleMapsImportPayload,
@@ -30,6 +34,13 @@ export type ListLeadsParams = {
   page?: number
   limit?: number
   status?: LeadStatus
+  /** Máx. 200 caracteres no backend; o cliente pode trimar antes. */
+  search?: string
+  minTotalScore?: number
+  minReviewsCount?: number
+  hasWebsite?: boolean
+  sortBy?: LeadSortBy
+  sortDir?: LeadSortDir
 }
 
 export async function listLeads(
@@ -37,14 +48,37 @@ export async function listLeads(
 ): Promise<LeadsListResponse> {
   const page = params.page ?? 1
   const limit = params.limit ?? 20
-  const search = new URLSearchParams({
+  const searchParams = new URLSearchParams({
     page: String(page),
     limit: String(limit),
   })
   if (params.status != null) {
-    search.set("status", params.status)
+    searchParams.set("status", params.status)
   }
-  const res = await authorizedFetch(`${getApiBaseUrl()}/leads?${search}`)
+  const q = params.search?.trim()
+  if (q) {
+    searchParams.set("search", q.slice(0, 200))
+  }
+  if (params.minTotalScore != null) {
+    searchParams.set("minTotalScore", String(params.minTotalScore))
+  }
+  if (params.minReviewsCount != null) {
+    searchParams.set("minReviewsCount", String(params.minReviewsCount))
+  }
+  if (params.hasWebsite === true) {
+    searchParams.set("hasWebsite", "true")
+  }
+  if (params.hasWebsite === false) {
+    searchParams.set("hasWebsite", "false")
+  }
+  const sortBy = params.sortBy ?? "updatedAt"
+  const sortDir = params.sortDir ?? "desc"
+  searchParams.set("sortBy", sortBy)
+  searchParams.set("sortDir", sortDir)
+
+  const res = await authorizedFetch(
+    `${getApiBaseUrl()}/leads?${searchParams}`
+  )
   return parseJson<LeadsListResponse>(res)
 }
 

@@ -1,5 +1,6 @@
 import type { QueryClient, QueryKey } from "@tanstack/react-query"
 
+import type { LeadListFilterState } from "@/features/leads/types/lead-list-query"
 import type { Lead, LeadStatus, LeadsListResponse } from "@/features/leads/types/lead"
 import { pipelineColumnQueryKey } from "@/features/pipeline/queries/pipeline-query-keys"
 import { bumpLeadsListMeta } from "@/features/pipeline/lib/pipeline-leads-list-meta"
@@ -36,11 +37,12 @@ export function applyOptimisticPipelineMove(
     fromStatus,
     lossReasonId,
     lossReasonNote,
-  }: PipelineMoveVariables
+  }: PipelineMoveVariables,
+  filters: LeadListFilterState
 ): void {
   if (fromStatus === toStatus) return
 
-  const fromKey = pipelineColumnQueryKey(fromStatus)
+  const fromKey = pipelineColumnQueryKey(fromStatus, filters)
   const fromData = queryClient.getQueryData<LeadsListResponse>(fromKey)
   if (!fromData) return
 
@@ -64,7 +66,7 @@ export function applyOptimisticPipelineMove(
     meta: bumpLeadsListMeta(fromData.meta, -1),
   })
 
-  const toKey = pipelineColumnQueryKey(toStatus)
+  const toKey = pipelineColumnQueryKey(toStatus, filters)
   const toData = queryClient.getQueryData<LeadsListResponse>(toKey)
   const limit = fromData.meta.limit
 

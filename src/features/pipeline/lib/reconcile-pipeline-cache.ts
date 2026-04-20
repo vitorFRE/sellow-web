@@ -1,5 +1,6 @@
 import type { QueryClient } from "@tanstack/react-query"
 
+import type { LeadListFilterState } from "@/features/leads/types/lead-list-query"
 import type { Lead, LeadStatus, LeadsListResponse } from "@/features/leads/types/lead"
 import {
   PIPELINE_PAGE_SIZE,
@@ -11,9 +12,10 @@ import { pipelineColumnQueryKey } from "@/features/pipeline/queries/pipeline-que
 export function replaceLeadInPipelineColumn(
   queryClient: QueryClient,
   columnStatus: LeadStatus,
-  serverLead: Lead
+  serverLead: Lead,
+  filters: LeadListFilterState
 ): void {
-  const key = pipelineColumnQueryKey(columnStatus)
+  const key = pipelineColumnQueryKey(columnStatus, filters)
   const data = queryClient.getQueryData<LeadsListResponse>(key)
   if (!data) return
   queryClient.setQueryData<LeadsListResponse>(key, {
@@ -25,15 +27,21 @@ export function replaceLeadInPipelineColumn(
 export function reconcilePipelineCacheWithServerLead(
   queryClient: QueryClient,
   serverLead: Lead,
-  destinationColumn: LeadStatus
+  destinationColumn: LeadStatus,
+  filters: LeadListFilterState
 ): void {
   if (serverLead.status === destinationColumn) {
-    replaceLeadInPipelineColumn(queryClient, destinationColumn, serverLead)
+    replaceLeadInPipelineColumn(
+      queryClient,
+      destinationColumn,
+      serverLead,
+      filters
+    )
     return
   }
 
   for (const status of PIPELINE_STATUSES) {
-    const key = pipelineColumnQueryKey(status)
+    const key = pipelineColumnQueryKey(status, filters)
     const data = queryClient.getQueryData<LeadsListResponse>(key)
     if (!data?.data.some((l) => l.id === serverLead.id)) continue
     queryClient.setQueryData<LeadsListResponse>(key, {
@@ -43,12 +51,12 @@ export function reconcilePipelineCacheWithServerLead(
     break
   }
 
-  const destKey = pipelineColumnQueryKey(serverLead.status)
+  const destKey = pipelineColumnQueryKey(serverLead.status, filters)
   const destData = queryClient.getQueryData<LeadsListResponse>(destKey)
   const limit =
     destData?.meta.limit ??
     queryClient.getQueryData<LeadsListResponse>(
-      pipelineColumnQueryKey(destinationColumn)
+      pipelineColumnQueryKey(destinationColumn, filters)
     )?.meta.limit ??
     PIPELINE_PAGE_SIZE
 

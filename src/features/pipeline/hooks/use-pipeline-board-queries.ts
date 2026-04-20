@@ -1,6 +1,8 @@
 import { useQueries } from "@tanstack/react-query"
 
 import { listLeads } from "@/features/leads/api/leads-api"
+import { leadListFiltersToParams } from "@/features/leads/lib/lead-list-filters"
+import type { LeadListFilterState } from "@/features/leads/types/lead-list-query"
 import type {
   Lead,
   LeadStatus,
@@ -13,12 +15,21 @@ import {
 } from "@/features/pipeline/config/pipeline-columns"
 import { pipelineColumnQueryKey } from "@/features/pipeline/queries/pipeline-query-keys"
 
-export function usePipelineBoardQueries() {
+export function usePipelineBoardQueries(filters: LeadListFilterState) {
+  const filterParams = leadListFiltersToParams(filters, {
+    includeStatus: false,
+  })
+
   const queries = useQueries({
     queries: PIPELINE_STATUSES.map((status) => ({
-      queryKey: pipelineColumnQueryKey(status),
+      queryKey: pipelineColumnQueryKey(status, filters),
       queryFn: () =>
-        listLeads({ page: 1, limit: PIPELINE_PAGE_SIZE, status }),
+        listLeads({
+          page: 1,
+          limit: PIPELINE_PAGE_SIZE,
+          status,
+          ...filterParams,
+        }),
       placeholderData: (previousData: LeadsListResponse | undefined) =>
         previousData,
     })),

@@ -15,6 +15,7 @@ type Props = {
   followUp: LeadFollowUpView
   onEdit: () => void
   onClear: () => void
+  isClearing?: boolean
   className?: string
 }
 
@@ -22,6 +23,7 @@ export function LeadDetailFollowUpSummaryCard({
   followUp,
   onEdit,
   onClear,
+  isClearing = false,
   className,
 }: Props) {
   const when = followUp.nextContactAt.trim()
@@ -45,9 +47,15 @@ export function LeadDetailFollowUpSummaryCard({
             <IconDotsVertical className="size-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="min-w-44">
-            <DropdownMenuItem onClick={onEdit}>Editar follow-up</DropdownMenuItem>
-            <DropdownMenuItem variant="destructive" onClick={onClear}>
-              Limpar agendamento
+            <DropdownMenuItem onClick={onEdit} disabled={isClearing}>
+              Editar follow-up
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              variant="destructive"
+              onClick={onClear}
+              disabled={isClearing}
+            >
+              {isClearing ? "Removendo…" : "Limpar agendamento"}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

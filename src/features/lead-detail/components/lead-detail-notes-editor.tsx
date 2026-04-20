@@ -1,4 +1,4 @@
-import { IconNotes } from "@tabler/icons-react"
+import { IconLoader2, IconNotes } from "@tabler/icons-react"
 
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -9,6 +9,8 @@ type Props = {
   onSave: () => void
   onCancel: () => void
   dirty: boolean
+  isLoading?: boolean
+  isSaving?: boolean
   className?: string
 }
 
@@ -18,8 +20,12 @@ export function LeadDetailNotesEditor({
   onSave,
   onCancel,
   dirty,
+  isLoading = false,
+  isSaving = false,
   className,
 }: Props) {
+  const disabled = isLoading || isSaving
+
   return (
     <section className={cn("space-y-3", className)}>
       <h3 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -33,18 +39,42 @@ export function LeadDetailNotesEditor({
           onChange={(e) => onChange(e.target.value)}
           rows={8}
           maxLength={8000}
-          placeholder="Briefing do site, objeções, próximos passos com o cliente…"
+          disabled={disabled}
+          placeholder={
+            isLoading
+              ? "Carregando anotações…"
+              : "Briefing do site, objeções, próximos passos com o cliente…"
+          }
           className={cn(
             "min-h-40 w-full resize-y rounded-4xl border border-input bg-input/30 px-3 py-2 text-sm outline-none transition-colors",
-            "placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            "placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
+            "disabled:cursor-not-allowed disabled:opacity-60"
           )}
         />
       </label>
       <div className="flex flex-wrap items-center gap-2">
-        <Button type="button" size="sm" onClick={onSave} disabled={!dirty}>
-          Salvar anotações
+        <Button
+          type="button"
+          size="sm"
+          onClick={onSave}
+          disabled={!dirty || disabled}
+        >
+          {isSaving ? (
+            <>
+              <IconLoader2 className="size-3.5 animate-spin" aria-hidden />
+              Salvando…
+            </>
+          ) : (
+            "Salvar anotações"
+          )}
         </Button>
-        <Button type="button" size="sm" variant="outline" onClick={onCancel} disabled={!dirty}>
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          onClick={onCancel}
+          disabled={!dirty || disabled}
+        >
           Cancelar
         </Button>
         {dirty ? (

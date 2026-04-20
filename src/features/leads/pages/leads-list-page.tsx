@@ -4,15 +4,37 @@ import type { OnChangeFn, PaginationState } from "@tanstack/react-table"
 
 import { HttpError } from "@/features/auth/api/auth-api"
 import { deleteLead, listLeads } from "@/features/leads/api/leads-api"
+import { LeadListFiltersBar } from "@/features/leads/components/lead-list-filters-bar"
 import { LeadsDataTable } from "@/features/leads/components/leads-data-table"
+import { leadListFiltersToParams } from "@/features/leads/lib/lead-list-filters"
 import { leadsListQueryKey } from "@/features/leads/queries/leads-query-keys"
+import {
+  DEFAULT_LEAD_LIST_FILTER_STATE,
+  type LeadListFilterState,
+} from "@/features/leads/types/lead-list-query"
 
 export function LeadsListPage() {
   const queryClient = useQueryClient()
+  const [filters, setFilters] = React.useState<LeadListFilterState>(
+    () => ({ ...DEFAULT_LEAD_LIST_FILTER_STATE })
+  )
   const [pagination, setPagination] = React.useState<PaginationState>({
     pageIndex: 0,
     pageSize: 20,
   })
+
+  const filterParams = React.useMemo(
+    () => leadListFiltersToParams(filters, { includeStatus: true }),
+    [filters]
+  )
+  const filtersKey = React.useMemo(
+    () => JSON.stringify(filterParams),
+    [filterParams]
+  )
+
+  React.useEffect(() => {
+    setPagination((p) => (p.pageIndex === 0 ? p : { ...p, pageIndex: 0 }))
+  }, [filtersKey])
 
   const onPaginationChange: OnChangeFn<PaginationState> = React.useCallback(
     (updater) => {
@@ -33,11 +55,13 @@ export function LeadsListPage() {
       ...leadsListQueryKey,
       pagination.pageIndex,
       pagination.pageSize,
+      filterParams,
     ],
     queryFn: () =>
       listLeads({
         page: pagination.pageIndex + 1,
         limit: pagination.pageSize,
+        ...filterParams,
       }),
   })
 
@@ -70,11 +94,20 @@ export function LeadsListPage() {
 
   return (
     <div className="flex w-full min-w-0 flex-col gap-6">
-      <div className="flex min-w-0 flex-col gap-2">
-        <h1 className="text-xl font-medium">Leads</h1>
-        <p className="wrap-break-word text-sm text-muted-foreground">
-          Lista paginada via API. Apenas administradores têm acesso.
-        </p>
+      <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0 flex-1 space-y-2">
+          <h1 className="text-xl font-medium">Leads</h1>
+          <p className="wrap-break-word text-sm text-muted-foreground">
+            Lista paginada via API. Filtros são combinados com AND. Apenas
+            administradores têm acesso.
+          </p>
+        </div>
+        <LeadListFiltersBar
+          value={filters}
+          onChange={setFilters}
+          showStatus
+          align="end"
+        />
       </div>
 
       {deleteMutation.isError ? (

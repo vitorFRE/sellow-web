@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { IconLoader2 } from "@tabler/icons-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -20,6 +21,7 @@ type Props = {
   onOpenChange: (open: boolean) => void
   initial: LeadFollowUpView
   title: string
+  isSaving?: boolean
   onSave: (value: LeadFollowUpView) => void
 }
 
@@ -28,10 +30,12 @@ export function LeadDetailFollowUpDialog({
   onOpenChange,
   initial,
   title,
+  isSaving = false,
   onSave,
 }: Props) {
   const [draft, setDraft] = React.useState(initial)
   const dirty = isFollowUpDirty(draft, initial)
+  const isNew = !initial.nextContactAt.trim() && !initial.ownerLabel.trim()
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -39,19 +43,35 @@ export function LeadDetailFollowUpDialog({
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>
-            Preencha data do próximo contato, canal e lembrete. Tudo fica só neste dispositivo até
-            existir API (mock).
+            Preencha data do próximo contato, canal e responsável. O follow-up fica vinculado ao
+            lead e sincroniza com o backend.
           </DialogDescription>
         </DialogHeader>
 
         <LeadDetailFollowUpFields value={draft} onChange={setDraft} />
 
         <DialogFooter>
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            disabled={isSaving}
+          >
             Cancelar
           </Button>
-          <Button type="button" onClick={() => onSave(draft)} disabled={!dirty}>
-            Salvar
+          <Button
+            type="button"
+            onClick={() => onSave(draft)}
+            disabled={isSaving || (!isNew && !dirty)}
+          >
+            {isSaving ? (
+              <>
+                <IconLoader2 className="size-3.5 animate-spin" aria-hidden />
+                Salvando…
+              </>
+            ) : (
+              "Salvar"
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

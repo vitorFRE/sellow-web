@@ -1,11 +1,8 @@
 import {
-  IconCalendarEvent,
-  IconChartBar,
   IconFileImport,
   IconHome,
   IconLayoutKanban,
   IconPhoto,
-  IconReceipt,
   IconSettings,
   IconTemplate,
   IconUsers,
@@ -38,21 +35,6 @@ export const dashboardSidebarData = {
       title: "Importar",
       url: "/dashboard/importar",
       icon: <IconFileImport />,
-    },
-    {
-      title: "Follow-ups",
-      url: "/dashboard/followups",
-      icon: <IconCalendarEvent />,
-    },
-    {
-      title: "Propostas",
-      url: "/dashboard/propostas",
-      icon: <IconReceipt />,
-    },
-    {
-      title: "Relatório",
-      url: "/dashboard/relatorio",
-      icon: <IconChartBar />,
     },
   ],
   navSecondary: [

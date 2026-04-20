@@ -3,6 +3,7 @@ import { toast } from "sonner"
 
 import { HttpError } from "@/features/auth/api/auth-api"
 import { updateLeadStatus } from "@/features/leads/api/leads-api"
+import type { LeadListFilterState } from "@/features/leads/types/lead-list-query"
 import {
   applyOptimisticPipelineMove,
   type PipelineMoveVariables,
@@ -11,7 +12,7 @@ import {
 } from "@/features/pipeline/lib/apply-pipeline-optimistic-move"
 import { reconcilePipelineCacheWithServerLead } from "@/features/pipeline/lib/reconcile-pipeline-cache"
 
-export function usePipelineMoveLead() {
+export function usePipelineMoveLead(filters: LeadListFilterState) {
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -29,14 +30,15 @@ export function usePipelineMoveLead() {
     onMutate: async (variables) => {
       await queryClient.cancelQueries({ queryKey: ["leads", "pipeline"] })
       const previous = snapshotLeadsQueries(queryClient)
-      applyOptimisticPipelineMove(queryClient, variables)
+      applyOptimisticPipelineMove(queryClient, variables, filters)
       return { previous }
     },
     onSuccess: (serverLead, variables) => {
       reconcilePipelineCacheWithServerLead(
         queryClient,
         serverLead,
-        variables.status
+        variables.status,
+        filters
       )
     },
     onError: (err, _variables, context) => {
