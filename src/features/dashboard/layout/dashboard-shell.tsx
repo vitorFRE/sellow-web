@@ -17,10 +17,10 @@ export function DashboardShell({ children }: { children: ReactNode }) {
           <SidebarTrigger className="-ml-1" />
           <Separator
             orientation="vertical"
-            className="mr-2 data-[orientation=vertical]:h-4"
+            className="mr-2 data-vertical:h-4 data-vertical:self-center"
           />
         </header>
-        <div className="flex min-h-0 min-w-0 w-full flex-1 flex-col gap-4 overflow-auto p-4 md:p-6">
+        <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col gap-4 overflow-auto p-4 md:p-6">
           {children}
         </div>
       </SidebarInset>
