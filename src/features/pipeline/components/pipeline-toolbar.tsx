@@ -16,7 +16,7 @@ export function PipelineToolbar({
   onFiltersChange,
 }: Props) {
   return (
-    <header className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-border/60 bg-background/95 px-1 pb-3">
+    <header className="flex shrink-0 flex-wrap items-center justify-between gap-3 bg-background/95 px-1 pb-3">
       <h1 className="text-base font-semibold tracking-tight md:text-lg">
         Pipeline
       </h1>
