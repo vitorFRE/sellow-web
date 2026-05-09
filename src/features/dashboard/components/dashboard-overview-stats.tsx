@@ -22,7 +22,7 @@ export function DashboardOverviewStats({
         className
       )}
     >
-      <div className="min-w-0 rounded-3xl border border-border bg-card p-2 shadow-sm sm:p-3">
+      <div className="min-w-0 rounded-2xl border border-border bg-card p-2 shadow-sm sm:p-3">
         <DashboardFunnelChart
           className="min-h-44 w-full sm:min-h-48 lg:min-h-66"
           points={funnelChart}

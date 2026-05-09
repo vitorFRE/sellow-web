@@ -17,9 +17,9 @@ export function PipelinePage({
   createLeadOpen,
   onCreateLeadOpenChange,
 }: Props) {
-  const [filters, setFilters] = React.useState<LeadListFilterState>(
-    () => ({ ...DEFAULT_LEAD_LIST_FILTER_STATE })
-  )
+  const [filters, setFilters] = React.useState<LeadListFilterState>(() => ({
+    ...DEFAULT_LEAD_LIST_FILTER_STATE,
+  }))
 
   return (
     <div className="flex h-full min-h-0 w-full min-w-0 flex-col overflow-hidden">

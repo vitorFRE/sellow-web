@@ -15,14 +15,14 @@ export function DashboardPipelineStatusList({ countsByStatus, className }: Props
   return (
     <div
       className={cn(
-        "rounded-3xl border border-border bg-card px-5 py-4 shadow-sm",
+        "rounded-2xl border border-border bg-card px-5 py-4 shadow-sm",
         className
       )}
     >
       <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
         Leads por etapa
       </p>
-      <ul className="max-h-80 space-y-1.5 overflow-y-auto rounded-2xl border border-border/80 bg-muted/20 p-2.5 dark:bg-muted/10 sm:max-h-none">
+      <ul className="max-h-80 space-y-1.5 overflow-y-auto rounded-lg border border-border/80 bg-muted/20 p-2.5 dark:bg-muted/10 sm:max-h-none">
         {PIPELINE_STATUSES.map((status) => {
           const n = countsByStatus[status] ?? 0
           return (

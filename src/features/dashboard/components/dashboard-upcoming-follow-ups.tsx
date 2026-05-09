@@ -34,7 +34,7 @@ export function DashboardUpcomingFollowUps({ items, className }: Props) {
   return (
     <section
       className={cn(
-        "flex flex-col overflow-hidden rounded-[1.75rem] border border-border bg-card shadow-sm",
+        "flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm",
         className
       )}
     >

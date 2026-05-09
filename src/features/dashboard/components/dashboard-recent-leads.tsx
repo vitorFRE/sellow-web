@@ -21,7 +21,7 @@ export function DashboardRecentLeads({ leads, className }: Props) {
   return (
     <section
       className={cn(
-        "group/card flex flex-col overflow-hidden rounded-[1.75rem] border border-border bg-card shadow-sm",
+        "group/card flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm",
         className
       )}
     >
