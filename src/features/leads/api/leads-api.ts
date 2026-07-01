@@ -17,7 +17,8 @@ import type {
 } from "@/features/leads/types/google-maps-import"
 
 function unwrapLeadResponse(parsed: Lead | { data: Lead }): Lead {
-  return "data" in parsed && parsed.data ? parsed.data : parsed
+  if ("data" in parsed && parsed.data) return parsed.data
+  return parsed as Lead
 }
 
 export type ListLeadsParams = {

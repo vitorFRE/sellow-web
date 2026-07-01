@@ -1,16 +1,7 @@
 import * as React from "react"
-import { useForm } from "@tanstack/react-form"
-import { useQueryClient } from "@tanstack/react-query"
-import { toast } from "sonner"
 
-import { getApiErrorMessage } from "@/shared/lib/api-errors"
-import { createLead } from "@/features/leads/api/leads-api"
 import { CreateLeadFormFields } from "@/features/leads/components/create-lead-form/create-lead-form-fields"
-import { buildCreateLeadBody } from "@/features/leads/lib/build-create-lead-body"
-import {
-  createLeadDefaultValues,
-  createLeadFormSchema,
-} from "@/features/leads/schemas/create-lead-form-schema"
+import { useCreateLeadForm } from "@/features/leads/components/create-lead-form/use-create-lead-form"
 import {
   Dialog,
   DialogContent,
@@ -31,33 +22,17 @@ export function CreateLeadForm({
   onCreated,
   onCancel,
 }: CreateLeadFormProps) {
-  const queryClient = useQueryClient()
   const [submitError, setSubmitError] = React.useState<string | null>(null)
   const [isPending, setIsPending] = React.useState(false)
 
-  const form = useForm({
-    defaultValues: createLeadDefaultValues,
-    validators: {
-      onSubmit: createLeadFormSchema,
-      onBlur: createLeadFormSchema,
-    },
-    onSubmit: async ({ value }) => {
+  const form = useCreateLeadForm({
+    onCreated,
+    onSubmitStart: () => {
       setSubmitError(null)
       setIsPending(true)
-      try {
-        await createLead(buildCreateLeadBody(value))
-        await queryClient.invalidateQueries({ queryKey: ["leads"] })
-        toast.success("Lead criado.")
-        form.reset()
-        onCreated()
-      } catch (err) {
-        setSubmitError(
-          getApiErrorMessage(err, "Não foi possível criar o lead.")
-        )
-      } finally {
-        setIsPending(false)
-      }
     },
+    onSubmitEnd: () => setIsPending(false),
+    onSubmitError: setSubmitError,
   })
 
   React.useEffect(() => {

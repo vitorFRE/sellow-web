@@ -1,4 +1,4 @@
-import type { ReactFormExtendedApi } from "@tanstack/react-form"
+import type { CreateLeadFormApi } from "@/features/leads/components/create-lead-form/use-create-lead-form"
 
 import { Input } from "@/components/ui/input"
 import {
@@ -14,25 +14,9 @@ import {
   KANBAN_LEAD_STATUSES,
 } from "@/features/leads/config/lead-status"
 import { CreateLeadFieldShell } from "@/features/leads/components/create-lead-form/create-lead-field-shell"
-import type { CreateLeadFormValues } from "@/features/leads/schemas/create-lead-form-schema"
-
-type FormApi = ReactFormExtendedApi<
-  CreateLeadFormValues,
-  undefined,
-  undefined,
-  undefined,
-  undefined,
-  undefined,
-  undefined,
-  undefined,
-  undefined,
-  undefined,
-  undefined,
-  unknown
->
 
 type Props = {
-  form: FormApi
+  form: CreateLeadFormApi
 }
 
 export function CreateLeadFormFields({ form }: Props) {
@@ -122,7 +106,7 @@ export function CreateLeadFormFields({ form }: Props) {
             <Select
               value={field.state.value}
               onValueChange={(v) => {
-                if (isKanbanLeadStatus(v)) field.handleChange(v)
+                if (v && isKanbanLeadStatus(v)) field.handleChange(v)
               }}
             >
               <SelectTrigger

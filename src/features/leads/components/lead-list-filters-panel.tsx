@@ -22,7 +22,6 @@ import {
   type LeadListAdvancedFilterState,
 } from "@/features/leads/lib/lead-list-filters"
 import type { LeadListFilterState } from "@/features/leads/types/lead-list-query"
-import { cn } from "@/lib/utils"
 
 type Props = {
   applied: LeadListFilterState

@@ -75,7 +75,9 @@ export function PipelineLostReasonDialogFields({
           value={reasonId || undefined}
           disabled={isPending}
           required
-          onValueChange={onReasonChange}
+          onValueChange={(v) => {
+            if (v) onReasonChange(v)
+          }}
         >
           <SelectTrigger
             className="w-full"
