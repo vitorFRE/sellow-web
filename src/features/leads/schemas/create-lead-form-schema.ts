@@ -1,18 +1,6 @@
 import { z } from "zod"
 
-import type { LeadStatus } from "@/features/leads/types/lead"
-
-const LEAD_STATUSES = [
-  "IMPORTED",
-  "NEW",
-  "CONTACTED",
-  "QUALIFYING",
-  "BRIEFING",
-  "PROPOSAL_SENT",
-  "NEGOTIATION",
-  "WON",
-  "LOST",
-] as const satisfies readonly LeadStatus[]
+import { ALL_LEAD_STATUSES } from "@/features/leads/config/lead-status"
 
 export const createLeadFormSchema = z
   .object({
@@ -25,7 +13,7 @@ export const createLeadFormSchema = z
         (s) => s.trim() === "" || /^-?\d+(\.\d+)?$/.test(s.trim()),
         "Orçamento inválido."
       ),
-    status: z.enum(LEAD_STATUSES),
+    status: z.enum(ALL_LEAD_STATUSES),
     source: z.string(),
     city: z.string(),
     state: z.string(),

@@ -1,6 +1,6 @@
-import { HttpError } from "@/features/auth/api/auth-api"
 import { authorizedFetch } from "@/features/auth/lib/authorized-fetch"
 import { getApiBaseUrl } from "@/shared/config/api-base"
+import { parseApiJson } from "@/shared/api/parse-api-json"
 import type {
   Lead,
   LeadStatus,
@@ -16,18 +16,8 @@ import type {
   GoogleMapsImportResult,
 } from "@/features/leads/types/google-maps-import"
 
-async function parseJson<T>(res: Response): Promise<T> {
-  if (!res.ok) {
-    let message = `Erro ${res.status}`
-    try {
-      const body = await res.json()
-      if (body?.message) message = body.message
-    } catch {
-      // ignora
-    }
-    throw new HttpError(res.status, message)
-  }
-  return res.json() as Promise<T>
+function unwrapLeadResponse(parsed: Lead | { data: Lead }): Lead {
+  return "data" in parsed && parsed.data ? parsed.data : parsed
 }
 
 export type ListLeadsParams = {
@@ -79,7 +69,7 @@ export async function listLeads(
   const res = await authorizedFetch(
     `${getApiBaseUrl()}/leads?${searchParams}`
   )
-  return parseJson<LeadsListResponse>(res)
+  return parseApiJson<LeadsListResponse>(res)
 }
 
 export type UpdateLeadStatusBody = {
@@ -106,15 +96,15 @@ export async function updateLeadStatus(
     method: "PATCH",
     body: JSON.stringify(payload),
   })
-  const parsed = await parseJson<Lead | { data: Lead }>(res)
-  return "data" in parsed && parsed.data ? parsed.data : (parsed as Lead)
+  const parsed = await parseApiJson<Lead | { data: Lead }>(res)
+  return unwrapLeadResponse(parsed)
 }
 
 export async function deleteLead(id: string): Promise<string> {
   const res = await authorizedFetch(`${getApiBaseUrl()}/leads/delete/${id}`, {
     method: "DELETE",
   })
-  const body = await parseJson<{ data: string }>(res)
+  const body = await parseApiJson<{ data: string }>(res)
   return body.data
 }
 
@@ -128,7 +118,7 @@ export async function importGoogleMapsLeads(
       body: JSON.stringify(payload),
     }
   )
-  return parseJson<GoogleMapsImportResult>(res)
+  return parseApiJson<GoogleMapsImportResult>(res)
 }
 
 export async function createLead(body: CreateLeadRequestBody): Promise<Lead> {
@@ -137,6 +127,6 @@ export async function createLead(body: CreateLeadRequestBody): Promise<Lead> {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   })
-  const parsed = await parseJson<Lead | { data: Lead }>(res)
-  return "data" in parsed && parsed.data ? parsed.data : (parsed as Lead)
+  const parsed = await parseApiJson<Lead | { data: Lead }>(res)
+  return unwrapLeadResponse(parsed)
 }

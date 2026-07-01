@@ -31,7 +31,7 @@ export function PipelineColumn({
   const hasMore = meta != null && meta.total > leads.length
 
   return (
-    <div className="flex h-full max-h-full min-h-0 w-[300px] shrink-0 flex-col self-stretch overflow-hidden rounded-2xl border border-border/80 bg-muted/20 shadow-sm">
+    <div className="flex h-full max-h-full min-h-0 w-[272px] shrink-0 flex-col self-stretch overflow-hidden rounded-lg border border-stat-card-border bg-stat-board">
       <PipelineColumnHeader
         status={status}
         title={title}
@@ -44,16 +44,16 @@ export function PipelineColumn({
       <div
         ref={ref}
         className={cn(
-          "pipeline-scroll flex min-h-0 flex-1 flex-col gap-2.5 overflow-y-auto p-2.5",
-          isDropTarget && "bg-primary/5 ring-1 ring-primary/20 ring-inset"
+          "flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-2",
+          isDropTarget && "bg-primary/5 ring-1 ring-primary/15 ring-inset"
         )}
       >
         {isLoading ? (
-          <p className="px-1 py-6 text-center text-xs text-muted-foreground">
+          <p className="px-1 py-8 text-center text-xs text-stat-muted">
             Carregando…
           </p>
         ) : leads.length === 0 ? (
-          <p className="px-1 py-6 text-center text-xs text-muted-foreground">
+          <p className="px-1 py-8 text-center text-xs text-stat-muted">
             Nenhum lead
           </p>
         ) : (

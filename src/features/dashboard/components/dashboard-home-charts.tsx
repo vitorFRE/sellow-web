@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils"
 import type { LeadStatus } from "@/features/leads/types/lead"
 import { DashboardFunnelChart } from "@/features/dashboard/components/dashboard-funnel-chart"
 import { DashboardPipelineStatusList } from "@/features/dashboard/components/dashboard-pipeline-status-list"
+import { DashboardSectionHeader } from "@/features/dashboard/components/dashboard-section-header"
 import type { DashboardFunnelChartPoint } from "@/features/dashboard/types/dashboard-overview"
 
 type Props = {
@@ -10,7 +11,7 @@ type Props = {
   className?: string
 }
 
-export function DashboardOverviewStats({
+export function DashboardHomeCharts({
   countsByStatus,
   funnelChart,
   className,
@@ -18,18 +19,28 @@ export function DashboardOverviewStats({
   return (
     <section
       className={cn(
-        "grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:items-stretch lg:gap-5",
+        "grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)]",
         className
       )}
     >
-      <div className="min-w-0 rounded-2xl border border-border bg-card p-2 shadow-sm sm:p-3">
+      <div className="dashboard-stat-board flex flex-col gap-6 p-6">
+        <DashboardSectionHeader
+          eyebrow="Gráfico"
+          title="Desempenho mensal"
+          description="Leads novos e vendas fechadas por mês."
+        />
         <DashboardFunnelChart
-          className="min-h-44 w-full sm:min-h-48 lg:min-h-66"
+          className="min-h-48 w-full lg:min-h-56"
           points={funnelChart}
         />
       </div>
 
-      <div className="min-w-0">
+      <div className="dashboard-stat-board flex flex-col gap-6 p-6">
+        <DashboardSectionHeader
+          eyebrow="Funil"
+          title="Por etapa"
+          description="Distribuição atual de leads no pipeline."
+        />
         <DashboardPipelineStatusList countsByStatus={countsByStatus} />
       </div>
     </section>

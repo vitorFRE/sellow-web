@@ -5,20 +5,10 @@ import { normalizeLeadHref } from "@/features/leads/lib/lead-link-utils"
 import {
   formatLeadBudget,
   formatLeadLocation,
-} from "@/features/pipeline/lib/format-lead-card-meta"
-import { PIPELINE_COLUMN_LABELS } from "@/features/pipeline/config/pipeline-columns"
+} from "@/features/leads/lib/format-lead-meta"
+import { getLeadStatusLabel } from "@/features/leads/config/lead-status"
+import { formatDateTimeFullPt } from "@/shared/lib/format-datetime"
 import { cn } from "@/lib/utils"
-
-function formatDateTimePt(iso: string): string {
-  try {
-    return new Intl.DateTimeFormat("pt-BR", {
-      dateStyle: "short",
-      timeStyle: "short",
-    }).format(new Date(iso))
-  } catch {
-    return "—"
-  }
-}
 
 function formatScore(value: number) {
   if (Number.isInteger(value)) return String(value)
@@ -102,7 +92,7 @@ type Props = {
 }
 
 export function LeadDetailLeadInfoPanel({ lead, className }: Props) {
-  const statusLabel = PIPELINE_COLUMN_LABELS[lead.status]
+  const statusLabel = getLeadStatusLabel(lead.status)
   const budget = formatLeadBudget(lead.budget)
   const location = formatLeadLocation(lead)
   const mapsHref = normalizeLeadHref(lead.url)
@@ -174,8 +164,8 @@ export function LeadDetailLeadInfoPanel({ lead, className }: Props) {
       </DetailSection>
 
       <DetailSection title="Registro">
-        <Row label="Criado em">{formatDateTimePt(lead.createdAt)}</Row>
-        <Row label="Atualizado em">{formatDateTimePt(lead.updatedAt)}</Row>
+        <Row label="Criado em">{formatDateTimeFullPt(lead.createdAt)}</Row>
+        <Row label="Atualizado em">{formatDateTimeFullPt(lead.updatedAt)}</Row>
       </DetailSection>
 
       {showLossBlock ? (

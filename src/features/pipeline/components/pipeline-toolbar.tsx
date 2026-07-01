@@ -1,42 +1,30 @@
-import { IconPlus } from "@tabler/icons-react"
-
-import { Button } from "@/components/ui/button"
-import { LeadListFiltersBar } from "@/features/leads/components/lead-list-filters-bar"
+import { LeadListFiltersPanel } from "@/features/leads/components/lead-list-filters-panel"
+import type { LeadListAdvancedFilterState } from "@/features/leads/lib/lead-list-filters"
 import type { LeadListFilterState } from "@/features/leads/types/lead-list-query"
+import { PipelineHeader } from "@/features/pipeline/components/pipeline-header"
 
 type Props = {
+  applied: LeadListFilterState
+  onSearchChange: (search: string) => void
+  onApplyAdvanced: (advanced: LeadListAdvancedFilterState) => void
   onOpenCreateLead: () => void
-  filters: LeadListFilterState
-  onFiltersChange: (next: LeadListFilterState) => void
 }
 
 export function PipelineToolbar({
+  applied,
+  onSearchChange,
+  onApplyAdvanced,
   onOpenCreateLead,
-  filters,
-  onFiltersChange,
 }: Props) {
   return (
-    <header className="flex shrink-0 flex-wrap items-center justify-between gap-3 bg-background/95 px-1 pb-3">
-      <h1 className="text-base font-semibold tracking-tight md:text-lg">
-        Pipeline
-      </h1>
-      <div className="flex items-center gap-2">
-        <LeadListFiltersBar
-          value={filters}
-          onChange={onFiltersChange}
-          showStatus={false}
-          align="end"
-        />
-        <Button
-          type="button"
-          size="sm"
-          className="gap-2 rounded-2xl"
-          onClick={onOpenCreateLead}
-        >
-          <IconPlus className="size-4" aria-hidden />
-          Novo lead
-        </Button>
-      </div>
-    </header>
+    <div className="shrink-0 border-b border-border bg-background px-4 md:px-6">
+      <PipelineHeader onOpenCreateLead={onOpenCreateLead} />
+      <LeadListFiltersPanel
+        applied={applied}
+        onSearchChange={onSearchChange}
+        onApplyAdvanced={onApplyAdvanced}
+        panelTitle="Refinar pipeline"
+      />
+    </div>
   )
 }

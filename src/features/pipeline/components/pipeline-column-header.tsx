@@ -1,8 +1,6 @@
 import { cn } from "@/lib/utils"
 import type { LeadStatus } from "@/features/leads/types/lead"
-import {
-  PIPELINE_STATUS_DOT,
-} from "@/features/pipeline/config/pipeline-columns"
+import { PIPELINE_STATUS_DOT } from "@/features/pipeline/config/pipeline-columns"
 
 type PipelineColumnHeaderProps = {
   status: LeadStatus
@@ -24,25 +22,25 @@ export function PipelineColumnHeader({
   fullTotal,
 }: PipelineColumnHeaderProps) {
   return (
-    <div className="shrink-0 border-b border-border/80 bg-card/40 px-3 py-3">
-      <div className="flex items-center gap-2.5">
+    <div className="shrink-0 border-b border-stat-card-border px-3 py-3">
+      <div className="flex items-center gap-2">
         <span
           className={cn(
-            "size-2 shrink-0 rounded-full ring-2 ring-background",
+            "size-1.5 shrink-0 rounded-full",
             PIPELINE_STATUS_DOT[status]
           )}
           aria-hidden
         />
-        <h2 className="min-w-0 flex-1 truncate font-medium text-sm tracking-tight">
+        <h2 className="min-w-0 flex-1 truncate text-[11px] font-medium tracking-[0.1em] text-stat-label uppercase">
           {title}
         </h2>
-        <span className="shrink-0 rounded-full border bg-background px-2.5 py-0.5 text-xs font-medium text-muted-foreground tabular-nums shadow-sm">
+        <span className="shrink-0 font-mono text-xs tabular-nums text-stat-muted">
           {isLoading ? "…" : total}
         </span>
       </div>
       {hasMore ? (
-        <p className="mt-2 pl-4 text-xs text-muted-foreground">
-          Mostrando {shown} de {fullTotal}
+        <p className="mt-1.5 pl-3.5 font-mono text-[10px] text-stat-muted">
+          {shown} de {fullTotal}
         </p>
       ) : null}
     </div>

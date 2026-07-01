@@ -26,7 +26,7 @@ export function ImportJsonSource({ value, onChange }: Props) {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap items-center gap-2">
           <input
@@ -41,7 +41,7 @@ export function ImportJsonSource({ value, onChange }: Props) {
             type="button"
             variant="outline"
             size="sm"
-            className="gap-2 rounded-2xl"
+            className="gap-2"
             onClick={() => fileRef.current?.click()}
           >
             <IconFileUpload className="size-4" aria-hidden />
@@ -50,12 +50,10 @@ export function ImportJsonSource({ value, onChange }: Props) {
           <label htmlFor="import-json-file" className="sr-only">
             Selecionar arquivo JSON
           </label>
-          <span className="text-xs text-muted-foreground">
-            ou cole / edite abaixo
-          </span>
+          <span className="text-xs text-stat-muted">ou cole abaixo</span>
         </div>
         {chars > 0 ? (
-          <div className="flex items-center gap-1.5 text-xs tabular-nums text-muted-foreground">
+          <div className="flex items-center gap-1.5 font-mono text-xs tabular-nums text-stat-muted">
             <IconBraces className="size-3.5 opacity-70" aria-hidden />
             <span>
               {chars.toLocaleString("pt-BR")} caracteres
@@ -64,16 +62,15 @@ export function ImportJsonSource({ value, onChange }: Props) {
           </div>
         ) : null}
       </div>
-      <div className="relative">
-        <textarea
-          className="min-h-[240px] w-full resize-y rounded-4xl border border-input bg-muted/20 px-4 py-3.5 font-mono text-[13px] leading-relaxed outline-none transition-shadow focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/45 sm:min-h-[260px]"
-          placeholder='{ "items": [ { "title": "...", "url": "..." } ] }'
-          spellCheck={false}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          aria-label="Conteúdo JSON para importação"
-        />
-      </div>
+
+      <textarea
+        className="min-h-[280px] w-full resize-y rounded-lg border border-stat-card-border bg-stat-card px-4 py-3.5 font-mono text-[13px] leading-relaxed text-stat-value outline-none transition-colors focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/40"
+        placeholder='{ "items": [ { "title": "...", "url": "..." } ] }'
+        spellCheck={false}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        aria-label="Conteúdo JSON para importação"
+      />
     </div>
   )
 }

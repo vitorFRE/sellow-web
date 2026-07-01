@@ -37,10 +37,16 @@ function linkFor(url: string) {
   return <Link to={url} />
 }
 
-export function NavMain({ items }: { items: NavItem[] }) {
+export function NavMain({
+  items,
+  label = "Principal",
+}: {
+  items: NavItem[]
+  label?: string
+}) {
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Principal</SidebarGroupLabel>
+      <SidebarGroupLabel>{label}</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) =>
           item.items?.length ? (

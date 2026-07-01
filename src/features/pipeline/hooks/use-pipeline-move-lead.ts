@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 
-import { HttpError } from "@/features/auth/api/auth-api"
+import { getApiErrorMessage } from "@/shared/lib/api-errors"
 import { updateLeadStatus } from "@/features/leads/api/leads-api"
 import type { LeadListFilterState } from "@/features/leads/types/lead-list-query"
 import {
@@ -45,10 +45,10 @@ export function usePipelineMoveLead(filters: LeadListFilterState) {
       if (context?.previous) {
         restoreLeadsQueries(queryClient, context.previous)
       }
-      const message =
-        err instanceof HttpError
-          ? err.message
-          : "Não foi possível atualizar o status do lead."
+      const message = getApiErrorMessage(
+        err,
+        "Não foi possível atualizar o status do lead."
+      )
       toast.error(message, { id: "pipeline-move-status" })
     },
   })

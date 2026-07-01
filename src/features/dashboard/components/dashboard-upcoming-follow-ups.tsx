@@ -32,13 +32,8 @@ export function DashboardUpcomingFollowUps({ items, className }: Props) {
   const preview = items.slice(0, PREVIEW_COUNT)
 
   return (
-    <section
-      className={cn(
-        "flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm",
-        className
-      )}
-    >
-      <div className="border-b border-border/50 bg-muted/20 px-5 py-4 dark:bg-muted/10">
+    <section className={cn("flex flex-col overflow-hidden", className)}>
+      <div className="dashboard-panel-header">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
             <span className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-primary/12 text-primary">
@@ -57,7 +52,7 @@ export function DashboardUpcomingFollowUps({ items, className }: Props) {
             to="/dashboard/pipeline"
             className={cn(
               buttonVariants({ variant: "ghost", size: "sm" }),
-              "h-8 gap-0.5 pr-1 pl-2 text-xs text-muted-foreground hover:text-foreground"
+              "gap-0.5 pr-1 pl-2 text-xs text-muted-foreground hover:text-foreground"
             )}
           >
             Pipeline

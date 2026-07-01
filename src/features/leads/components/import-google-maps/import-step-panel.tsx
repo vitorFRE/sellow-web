@@ -1,10 +1,17 @@
 import * as React from "react"
 
+import { cn } from "@/lib/utils"
+
 type Props = {
   step: number
   title: string
   description?: string
   children: React.ReactNode
+  className?: string
+}
+
+function stepLabel(step: number) {
+  return String(step).padStart(2, "0")
 }
 
 export function ImportStepPanel({
@@ -12,23 +19,26 @@ export function ImportStepPanel({
   title,
   description,
   children,
+  className,
 }: Props) {
   return (
-    <section className="flex flex-col gap-4 rounded-4xl border border-border/80 bg-card p-5 shadow-sm sm:p-6">
-      <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:gap-4">
+    <section className={cn("dashboard-stat-board space-y-6", className)}>
+      <header className="flex items-start gap-5 border-b border-border pb-5">
         <span
-          className="flex size-9 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-sm font-semibold tabular-nums text-primary"
+          className="shrink-0 font-mono text-xs tabular-nums text-stat-muted"
           aria-hidden
         >
-          {step}
+          {stepLabel(step)}
         </span>
-        <div className="min-w-0 flex-1 space-y-1">
-          <h2 className="text-base font-medium tracking-tight">{title}</h2>
+        <div className="min-w-0 flex-1 space-y-1.5">
+          <h2 className="text-base font-semibold tracking-tight text-stat-value">
+            {title}
+          </h2>
           {description ? (
-            <p className="text-sm text-muted-foreground">{description}</p>
+            <p className="text-sm leading-relaxed text-stat-muted">{description}</p>
           ) : null}
         </div>
-      </div>
+      </header>
       <div className="min-w-0">{children}</div>
     </section>
   )

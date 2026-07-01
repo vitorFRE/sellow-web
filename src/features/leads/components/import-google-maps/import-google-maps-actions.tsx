@@ -14,14 +14,15 @@ export function ImportGoogleMapsActions({
   onImport,
 }: Props) {
   return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <p className="text-xs text-muted-foreground">
-        A importação pode levar alguns segundos conforme a quantidade de itens.
+    <div className="flex flex-col gap-4 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between">
+      <p className="max-w-md text-xs leading-relaxed text-stat-muted">
+        A importação pode levar alguns segundos conforme a quantidade de itens
+        no arquivo.
       </p>
       <Button
         type="button"
-        size="lg"
-        className="shrink-0 gap-2 rounded-2xl px-6"
+        size="default"
+        className="shrink-0 gap-2 px-5"
         disabled={!canImport}
         onClick={onImport}
       >

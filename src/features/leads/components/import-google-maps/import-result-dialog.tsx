@@ -1,5 +1,3 @@
-import { IconCircleCheck } from "@tabler/icons-react"
-
 import {
   Dialog,
   DialogContent,
@@ -28,49 +26,52 @@ export function ImportResultDialog({
 }: Props) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="gap-6 border bg-card text-center shadow-lg sm:max-w-md">
-        <DialogHeader className="gap-4 text-center sm:text-center">
-          <div className="mx-auto flex size-14 items-center justify-center rounded-3xl bg-primary/12 text-primary">
-            <IconCircleCheck className="size-8" aria-hidden />
-          </div>
-          <DialogTitle className="text-lg font-semibold">
-            Importação concluída
+      <DialogContent className="gap-6 border border-stat-card-border bg-stat-board sm:max-w-md">
+        <DialogHeader className="gap-2 text-left sm:text-left">
+          <p className="text-[11px] font-medium tracking-[0.14em] text-stat-label uppercase">
+            Concluído
+          </p>
+          <DialogTitle className="text-xl font-semibold tracking-tight">
+            Importação finalizada
           </DialogTitle>
         </DialogHeader>
-        <div className="grid grid-cols-3 gap-4 px-2">
-          <div className="flex flex-col items-center gap-1">
-            <span className="text-3xl font-semibold tabular-nums text-primary">
+
+        <div className="grid grid-cols-3 gap-3 border-y border-border py-5">
+          <div className="space-y-1 text-center">
+            <p className="text-3xl font-semibold tabular-nums text-primary">
               {created}
-            </span>
-            <span className="text-xs text-muted-foreground">Criados</span>
+            </p>
+            <p className="text-[11px] tracking-[0.08em] text-stat-muted uppercase">
+              Criados
+            </p>
           </div>
-          <div className="flex flex-col items-center gap-1">
-            <span className="text-3xl font-semibold tabular-nums text-foreground">
+          <div className="space-y-1 text-center">
+            <p className="text-3xl font-semibold tabular-nums text-stat-value">
               {updated}
-            </span>
-            <span className="text-xs text-muted-foreground">Atualizados</span>
+            </p>
+            <p className="text-[11px] tracking-[0.08em] text-stat-muted uppercase">
+              Atualizados
+            </p>
           </div>
-          <div className="flex flex-col items-center gap-1">
-            <span className="text-3xl font-semibold tabular-nums text-muted-foreground">
+          <div className="space-y-1 text-center">
+            <p className="text-3xl font-semibold tabular-nums text-stat-muted">
               {skipped}
-            </span>
-            <span className="text-xs text-muted-foreground">Ignorados</span>
+            </p>
+            <p className="text-[11px] tracking-[0.08em] text-stat-muted uppercase">
+              Ignorados
+            </p>
           </div>
         </div>
-        <DialogFooter className="flex-col gap-2 sm:flex-row sm:justify-center">
+
+        <DialogFooter className="gap-2 sm:justify-end">
           <Button
             type="button"
             variant="outline"
-            className="w-full sm:w-auto sm:min-w-32"
             onClick={() => onOpenChange(false)}
           >
             Fechar
           </Button>
-          <Button
-            type="button"
-            className="w-full sm:w-auto sm:min-w-32"
-            onClick={onViewLeads}
-          >
+          <Button type="button" onClick={onViewLeads}>
             Ver leads
           </Button>
         </DialogFooter>

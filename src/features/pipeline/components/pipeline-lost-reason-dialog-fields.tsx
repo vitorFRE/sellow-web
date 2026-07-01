@@ -1,6 +1,6 @@
 import type { UseQueryResult } from "@tanstack/react-query"
 
-import { HttpError } from "@/features/auth/api/auth-api"
+import { isAdminForbidden, getApiErrorMessage } from "@/shared/lib/api-errors"
 import {
   Select,
   SelectContent,
@@ -10,8 +10,6 @@ import {
 } from "@/components/ui/select"
 import type { LossReason } from "@/features/settings/types/loss-reason"
 import { cn } from "@/lib/utils"
-
-const NO_REASON = "__none__"
 
 type Query = UseQueryResult<LossReason[], Error>
 
@@ -32,9 +30,7 @@ export function PipelineLostReasonDialogFields({
   onReasonChange,
   onNoteChange,
 }: Props) {
-  const is403 =
-    reasonsQuery.error instanceof HttpError &&
-    reasonsQuery.error.status === 403
+  const is403 = isAdminForbidden(reasonsQuery.error)
 
   if (is403) {
     return (
@@ -47,9 +43,10 @@ export function PipelineLostReasonDialogFields({
   if (reasonsQuery.isError) {
     return (
       <p className="text-sm text-destructive">
-        {reasonsQuery.error instanceof HttpError
-          ? reasonsQuery.error.message
-          : "Não foi possível carregar os motivos."}
+        {getApiErrorMessage(
+          reasonsQuery.error,
+          "Não foi possível carregar os motivos."
+        )}
       </p>
     )
   }
@@ -67,29 +64,29 @@ export function PipelineLostReasonDialogFields({
     )
   }
 
-  const selectValue = reasonId === "" ? NO_REASON : reasonId
+  const reasons = reasonsQuery.data
+  const selectedReason = reasons.find((r) => r.id === reasonId)
 
   return (
     <>
       <div className="grid gap-1.5 text-sm font-medium">
         Motivo de perda
         <Select
-          value={selectValue}
+          value={reasonId || undefined}
           disabled={isPending}
           required
-          onValueChange={(v) =>
-            onReasonChange(v === NO_REASON ? "" : v)
-          }
+          onValueChange={onReasonChange}
         >
           <SelectTrigger
             className="w-full"
             aria-required
           >
-            <SelectValue placeholder="Selecione…" />
+            <SelectValue placeholder="Selecione…">
+              {selectedReason?.name}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={NO_REASON}>Selecione…</SelectItem>
-            {reasonsQuery.data.map((r) => (
+            {reasons.map((r) => (
               <SelectItem key={r.id} value={r.id}>
                 {r.name}
               </SelectItem>

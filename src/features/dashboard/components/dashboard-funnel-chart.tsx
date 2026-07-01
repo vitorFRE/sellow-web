@@ -10,8 +10,8 @@ const barConfig = {
   leadsCreated: {
     label: "Leads novos",
     colors: {
-      light: ["#3b82f6"],
-      dark: ["#6A5ACD"],
+      light: ["oklch(0.627 0.194 149.214)"],
+      dark: ["oklch(0.723 0.219 149.579)"],
     },
   },
 } satisfies ChartConfig
@@ -20,8 +20,8 @@ const lineConfig = {
   salesWon: {
     label: "Vendas realizadas",
     colors: {
-      light: ["#10b981"],
-      dark: ["#34d399"],
+      light: ["oklch(0.527 0.154 150.069)"],
+      dark: ["oklch(0.871 0.15 154.449)"],
     },
   },
 } satisfies ChartConfig
@@ -51,7 +51,7 @@ export function DashboardFunnelChart({ points, className }: Props) {
     return (
       <div
         className={cn(
-          "flex min-h-44 items-center justify-center rounded-2xl border border-dashed border-border/80 bg-muted/15 px-4 text-center text-xs text-muted-foreground",
+          "flex min-h-44 items-center justify-center rounded-lg border border-dashed border-border px-4 text-center text-xs text-stat-muted",
           className
         )}
       >

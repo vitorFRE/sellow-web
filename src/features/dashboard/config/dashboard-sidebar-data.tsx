@@ -26,6 +26,8 @@ export const dashboardSidebarData = {
       url: "/dashboard/pipeline",
       icon: <IconLayoutKanban />,
     },
+  ],
+  navImport: [
     {
       title: "Leads",
       url: "/dashboard/leads",

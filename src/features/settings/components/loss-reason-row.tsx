@@ -12,28 +12,28 @@ type Props = {
 }
 
 export function LossReasonRow({ reason, onEdit, onDelete, busy }: Props) {
+  const description = reason.description?.trim()
+
   return (
     <li
       className={cn(
-        "flex flex-col gap-2 border-b border-border/70 px-3 py-2.5 last:border-b-0 sm:flex-row sm:items-center sm:justify-between"
+        "flex flex-col gap-3 py-4 sm:flex-row sm:items-start sm:justify-between",
+        busy && "opacity-60"
       )}
     >
       <div className="min-w-0 flex-1 space-y-1">
-        <p className="text-sm font-medium text-foreground">{reason.name}</p>
-        {reason.description?.trim() ? (
-          <p className="text-xs text-muted-foreground wrap-break-word">
-            {reason.description}
-          </p>
-        ) : (
-          <p className="text-xs text-muted-foreground/70">Sem descrição</p>
-        )}
+        <p className="text-sm font-medium text-stat-value">{reason.name}</p>
+        <p className="text-sm leading-relaxed text-stat-muted">
+          {description || "Sem descrição"}
+        </p>
       </div>
-      <div className="flex shrink-0 gap-1.5 self-end sm:self-center">
+
+      <div className="flex shrink-0 items-center gap-1 self-start">
         <Button
           type="button"
           variant="ghost"
           size="sm"
-          className="h-7 gap-1 rounded-xl px-2.5"
+          className="h-8 gap-1.5 px-2 text-stat-muted hover:text-stat-value"
           disabled={busy}
           onClick={() => onEdit(reason)}
         >
@@ -44,7 +44,7 @@ export function LossReasonRow({ reason, onEdit, onDelete, busy }: Props) {
           type="button"
           variant="ghost"
           size="sm"
-          className="h-7 gap-1 rounded-xl px-2.5 text-destructive hover:bg-destructive/10"
+          className="h-8 gap-1.5 px-2 text-destructive hover:bg-destructive/10 hover:text-destructive"
           disabled={busy}
           onClick={() => onDelete(reason)}
         >

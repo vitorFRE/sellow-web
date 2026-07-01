@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 
-import { HttpError } from "@/features/auth/api/auth-api"
+import { getApiErrorMessage } from "@/shared/lib/api-errors"
 import {
   deleteLeadFollowUp,
   getLeadFollowUp,
@@ -35,10 +35,10 @@ export function useSaveLeadFollowUpMutation(leadId: string) {
       toast.success("Follow-up salvo.", { id: `lead-follow-up-${leadId}` })
     },
     onError: (err) => {
-      const message =
-        err instanceof HttpError
-          ? err.message
-          : "Não foi possível salvar o follow-up."
+      const message = getApiErrorMessage(
+        err,
+        "Não foi possível salvar o follow-up."
+      )
       toast.error(message, { id: `lead-follow-up-${leadId}` })
     },
   })
@@ -59,10 +59,10 @@ export function useDeleteLeadFollowUpMutation(leadId: string) {
       toast.success("Follow-up removido.", { id: `lead-follow-up-${leadId}` })
     },
     onError: (err) => {
-      const message =
-        err instanceof HttpError
-          ? err.message
-          : "Não foi possível remover o follow-up."
+      const message = getApiErrorMessage(
+        err,
+        "Não foi possível remover o follow-up."
+      )
       toast.error(message, { id: `lead-follow-up-${leadId}` })
     },
   })

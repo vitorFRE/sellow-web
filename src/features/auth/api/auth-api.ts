@@ -1,34 +1,11 @@
 import { getApiBaseUrl } from "@/shared/config/api-base"
+import { parseApiJson } from "@/shared/api/parse-api-json"
 import type {
   AuthUser,
   LoginResponse,
   RefreshResponse,
 } from "@/features/auth/types"
 import { tokenStorage } from "@/features/auth/lib/token-storage"
-
-export class HttpError extends Error {
-  readonly status: number
-
-  constructor(status: number, message: string) {
-    super(message)
-    this.name = "HttpError"
-    this.status = status
-  }
-}
-
-async function parseResponse<T>(res: Response): Promise<T> {
-  if (!res.ok) {
-    let message = `Erro ${res.status}`
-    try {
-      const body = await res.json()
-      if (body?.message) message = body.message
-    } catch {
-      // ignora parse errors
-    }
-    throw new HttpError(res.status, message)
-  }
-  return res.json() as Promise<T>
-}
 
 export async function login(
   email: string,
@@ -39,7 +16,7 @@ export async function login(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
   })
-  return parseResponse<LoginResponse>(res)
+  return parseApiJson<LoginResponse>(res)
 }
 
 export async function refreshTokens(): Promise<RefreshResponse> {
@@ -50,7 +27,7 @@ export async function refreshTokens(): Promise<RefreshResponse> {
       Authorization: `Bearer ${refreshToken}`,
     },
   })
-  return parseResponse<RefreshResponse>(res)
+  return parseApiJson<RefreshResponse>(res)
 }
 
 export async function getMe(): Promise<AuthUser> {
@@ -60,7 +37,7 @@ export async function getMe(): Promise<AuthUser> {
       Authorization: `Bearer ${accessToken}`,
     },
   })
-  return parseResponse<AuthUser>(res)
+  return parseApiJson<AuthUser>(res)
 }
 
 export async function logout(): Promise<void> {

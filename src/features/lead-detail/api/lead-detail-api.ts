@@ -1,6 +1,7 @@
-import { HttpError } from "@/features/auth/api/auth-api"
 import { authorizedFetch } from "@/features/auth/lib/authorized-fetch"
 import { getApiBaseUrl } from "@/shared/config/api-base"
+import { HttpError } from "@/shared/api/http-error"
+import { parseApiJson } from "@/shared/api/parse-api-json"
 
 export type LeadNotes = {
   body: string
@@ -22,25 +23,11 @@ export type LeadFollowUpInput = {
   reminder?: string
 }
 
-async function parseJson<T>(res: Response): Promise<T> {
-  if (!res.ok) {
-    let message = `Erro ${res.status}`
-    try {
-      const body = await res.json()
-      if (body?.message) message = body.message
-    } catch {
-      // ignora
-    }
-    throw new HttpError(res.status, message)
-  }
-  return res.json() as Promise<T>
-}
-
 export async function getLeadNotes(leadId: string): Promise<LeadNotes> {
   const res = await authorizedFetch(
     `${getApiBaseUrl()}/leads/${leadId}/notes`
   )
-  return parseJson<LeadNotes>(res)
+  return parseApiJson<LeadNotes>(res)
 }
 
 export async function putLeadNotes(
@@ -54,7 +41,7 @@ export async function putLeadNotes(
       body: JSON.stringify({ body }),
     }
   )
-  return parseJson<LeadNotes>(res)
+  return parseApiJson<LeadNotes>(res)
 }
 
 export async function getLeadFollowUp(
@@ -63,7 +50,7 @@ export async function getLeadFollowUp(
   const res = await authorizedFetch(
     `${getApiBaseUrl()}/leads/${leadId}/follow-up`
   )
-  return parseJson<LeadFollowUpResponse | null>(res)
+  return parseApiJson<LeadFollowUpResponse | null>(res)
 }
 
 export async function putLeadFollowUp(
@@ -85,7 +72,7 @@ export async function putLeadFollowUp(
       body: JSON.stringify(payload),
     }
   )
-  return parseJson<LeadFollowUpResponse>(res)
+  return parseApiJson<LeadFollowUpResponse>(res)
 }
 
 export async function deleteLeadFollowUp(leadId: string): Promise<null> {
@@ -108,7 +95,5 @@ export async function deleteLeadFollowUp(leadId: string): Promise<null> {
     throw new HttpError(res.status, message)
   }
 
-  // Sucesso: o backend pode devolver 200 com corpo vazio, `null` em JSON ou só `null`.
-  // `parseJson` + `res.json()` quebram em corpo vazio — aqui não exigimos JSON no OK.
   return null
 }

@@ -1,19 +1,18 @@
 import * as React from "react"
 import { useQuery } from "@tanstack/react-query"
+import { IconPlus } from "@tabler/icons-react"
 
-import { HttpError } from "@/features/auth/api/auth-api"
+import { isAdminForbidden, getApiErrorMessage } from "@/shared/lib/api-errors"
 import { listLossReasons } from "@/features/settings/api/loss-reasons-api"
 import { LossReasonCreateDialog } from "@/features/settings/components/loss-reason-create-dialog"
 import { LossReasonDeleteDialog } from "@/features/settings/components/loss-reason-delete-dialog"
 import { LossReasonEditDialog } from "@/features/settings/components/loss-reason-edit-dialog"
 import { LossReasonRow } from "@/features/settings/components/loss-reason-row"
 import { useLossReasonsMutations } from "@/features/settings/hooks/use-loss-reasons-mutations"
-import { lossReasonsErrorMessage } from "@/features/settings/lib/loss-reasons-error"
 import { lossReasonsQueryKey } from "@/features/settings/queries/loss-reasons-query-keys"
 import type { LossReason } from "@/features/settings/types/loss-reason"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { IconPlus } from "@tabler/icons-react"
 
 export function LossReasonsSection() {
   const [createOpen, setCreateOpen] = React.useState(false)
@@ -39,35 +38,40 @@ export function LossReasonsSection() {
         ? deleteMutation.variables
         : null
 
-  const is403 =
-    listQuery.error instanceof HttpError && listQuery.error.status === 403
+  const is403 = isAdminForbidden(listQuery.error)
 
   if (is403) {
     return (
-      <p className="text-sm text-muted-foreground">
+      <p className="text-sm leading-relaxed text-stat-muted">
         Apenas administradores podem gerenciar motivos de perda.
       </p>
     )
   }
 
   return (
-    <section className="flex min-w-0 flex-col gap-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0 space-y-1">
-          <h2 className="text-base font-medium">Motivos de perda</h2>
-          <p className="text-sm text-muted-foreground">
+    <section className="dashboard-stat-board flex min-w-0 flex-col p-6">
+      <header className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0 space-y-2">
+          <p className="text-[11px] font-medium tracking-[0.14em] text-stat-label uppercase">
+            Pipeline
+          </p>
+          <h2 className="text-base font-semibold tracking-tight text-stat-value">
+            Motivos de perda
+          </h2>
+          <p className="max-w-lg text-sm leading-relaxed text-stat-muted">
             Usados ao marcar um lead como perdido. Nomes são únicos no sistema.
           </p>
         </div>
         <Button
           type="button"
-          className="shrink-0 gap-1.5 self-start rounded-2xl sm:self-auto"
+          size="sm"
+          className="shrink-0 gap-1.5 self-start"
           onClick={() => setCreateOpen(true)}
         >
           <IconPlus className="size-4" aria-hidden />
           Novo motivo
         </Button>
-      </div>
+      </header>
 
       <LossReasonCreateDialog
         open={createOpen}
@@ -77,21 +81,25 @@ export function LossReasonsSection() {
       />
 
       {listQuery.isLoading ? (
-        <div className="space-y-2">
-          <Skeleton className="h-14 w-full rounded-xl" />
-          <Skeleton className="h-14 w-full rounded-xl" />
-        </div>
+        <ul className="divide-y divide-border">
+          <li>
+            <Skeleton className="h-16 w-full rounded-none bg-stat-card" />
+          </li>
+          <li>
+            <Skeleton className="h-16 w-full rounded-none bg-stat-card" />
+          </li>
+        </ul>
       ) : listQuery.isError ? (
-        <p className="text-sm text-destructive">
-          {lossReasonsErrorMessage(
+        <p className="pt-5 text-sm text-destructive">
+          {getApiErrorMessage(
             listQuery.error,
             "Não foi possível carregar os motivos."
           )}
         </p>
       ) : (
-        <ul className="overflow-hidden rounded-xl border border-border/80 bg-card">
+        <ul className="divide-y divide-border">
           {listQuery.data?.length === 0 ? (
-            <li className="px-4 py-8 text-center text-sm text-muted-foreground">
+            <li className="py-10 text-center text-sm text-stat-muted">
               Nenhum motivo cadastrado ainda.
             </li>
           ) : (

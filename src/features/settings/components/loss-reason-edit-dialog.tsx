@@ -75,7 +75,7 @@ export function LossReasonEditDialog({
                 rows={3}
                 maxLength={2000}
                 className={cn(
-                  "min-h-[5rem] w-full resize-y rounded-4xl border border-input bg-input/30 px-3 py-2 text-sm outline-none transition-colors",
+                  "min-h-[5rem] w-full resize-y rounded-lg border border-input bg-input/30 px-3 py-2 text-sm outline-none transition-colors",
                   "placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                 )}
               />

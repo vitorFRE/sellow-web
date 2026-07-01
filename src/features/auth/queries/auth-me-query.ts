@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 
-import { getMe, HttpError } from "@/features/auth/api/auth-api"
+import { getMe } from "@/features/auth/api/auth-api"
+import { isHttpError } from "@/shared/lib/api-errors"
 import { tryRefreshTokens } from "@/features/auth/lib/refresh-mutex"
 import { clearAuthState } from "@/features/auth/lib/clear-auth-state"
 import type { AuthUser } from "@/features/auth/types"
@@ -12,7 +13,7 @@ export async function fetchAuthMe(): Promise<AuthUser> {
   try {
     return await getMe()
   } catch (firstError) {
-    if (!(firstError instanceof HttpError && firstError.status === 401)) {
+    if (!(isHttpError(firstError) && firstError.status === 401)) {
       throw firstError
     }
 

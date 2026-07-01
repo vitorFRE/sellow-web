@@ -28,6 +28,10 @@ type Props = {
   onPaginationChange: OnChangeFn<PaginationState>
   onDeleteLead: (id: string) => void
   deletingLeadId: string | null
+  variant?: "default" | "imported"
+  onPromoteToPipeline?: (id: string) => void
+  promotingLeadId?: string | null
+  emptyMessage?: string
 }
 
 export function LeadsDataTable({
@@ -39,10 +43,21 @@ export function LeadsDataTable({
   onPaginationChange,
   onDeleteLead,
   deletingLeadId,
+  variant = "default",
+  onPromoteToPipeline,
+  promotingLeadId,
+  emptyMessage = "Nenhum lead encontrado.",
 }: Props) {
   const columns = React.useMemo(
-    () => createLeadsColumns({ onDeleteLead, deletingLeadId }),
-    [onDeleteLead, deletingLeadId]
+    () =>
+      createLeadsColumns({
+        onDeleteLead,
+        deletingLeadId,
+        variant,
+        onPromoteToPipeline,
+        promotingLeadId,
+      }),
+    [onDeleteLead, deletingLeadId, variant, onPromoteToPipeline, promotingLeadId]
   )
 
   const table = useReactTable({
@@ -61,11 +76,11 @@ export function LeadsDataTable({
   const colCount = columns.length
 
   return (
-    <div className="min-w-0 overflow-x-auto rounded-4xl border bg-card shadow-sm">
+    <div className="min-w-0 overflow-x-auto">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
+            <TableRow key={headerGroup.id} className="hover:bg-transparent">
               {headerGroup.headers.map((header) => (
                 <TableHead key={header.id}>
                   {header.isPlaceholder
@@ -84,14 +99,14 @@ export function LeadsDataTable({
             <TableRow>
               <TableCell
                 colSpan={colCount}
-                className="h-32 text-center text-muted-foreground"
+                className="h-32 text-center text-sm text-stat-muted"
               >
                 Carregando leads...
               </TableCell>
             </TableRow>
           ) : table.getRowModel().rows.length ? (
             table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id}>
+              <TableRow key={row.id} className="border-stat-card-border">
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -103,9 +118,9 @@ export function LeadsDataTable({
             <TableRow>
               <TableCell
                 colSpan={colCount}
-                className="h-24 text-center text-muted-foreground"
+                className="h-28 text-center text-sm text-stat-muted"
               >
-                Nenhum lead encontrado.
+                {emptyMessage}
               </TableCell>
             </TableRow>
           )}

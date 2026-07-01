@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 
-import { HttpError } from "@/features/auth/api/auth-api"
+import { getApiErrorMessage } from "@/shared/lib/api-errors"
 import {
   getLeadNotes,
   putLeadNotes,
@@ -30,10 +30,10 @@ export function useSaveLeadNotesMutation(leadId: string) {
       toast.success("Anotações salvas.", { id: `lead-notes-${leadId}` })
     },
     onError: (err) => {
-      const message =
-        err instanceof HttpError
-          ? err.message
-          : "Não foi possível salvar as anotações."
+      const message = getApiErrorMessage(
+        err,
+        "Não foi possível salvar as anotações."
+      )
       toast.error(message, { id: `lead-notes-${leadId}` })
     },
   })

@@ -1,18 +1,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 
-import { HttpError } from "@/features/auth/api/auth-api"
+import { getApiErrorMessage } from "@/shared/lib/api-errors"
 import {
   createLossReason,
   deleteLossReason,
   patchLossReason,
 } from "@/features/settings/api/loss-reasons-api"
 import { lossReasonsQueryKey } from "@/features/settings/queries/loss-reasons-query-keys"
-
-function errorMessage(err: unknown, fallback: string) {
-  if (err instanceof HttpError) return err.message
-  return fallback
-}
 
 type Args = {
   onCreateSuccess: () => void
@@ -35,7 +30,7 @@ export function useLossReasonsMutations({
       toast.success("Motivo criado.")
     },
     onError: (err) => {
-      toast.error(errorMessage(err, "Não foi possível criar o motivo."))
+      toast.error(getApiErrorMessage(err, "Não foi possível criar o motivo."))
     },
   })
 
@@ -53,7 +48,7 @@ export function useLossReasonsMutations({
       toast.success("Motivo atualizado.")
     },
     onError: (err) => {
-      toast.error(errorMessage(err, "Não foi possível salvar."))
+      toast.error(getApiErrorMessage(err, "Não foi possível salvar."))
     },
   })
 
@@ -65,7 +60,7 @@ export function useLossReasonsMutations({
       toast.success(msg)
     },
     onError: (err) => {
-      toast.error(errorMessage(err, "Não foi possível excluir."))
+      toast.error(getApiErrorMessage(err, "Não foi possível excluir."))
     },
   })
 

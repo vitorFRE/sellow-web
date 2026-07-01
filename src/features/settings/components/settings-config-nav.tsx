@@ -1,58 +1,56 @@
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar"
 import { settingsNavItems } from "@/features/settings/config/settings-nav"
 import type { SettingsSectionId } from "@/features/settings/config/settings-nav"
+import { cn } from "@/lib/utils"
 
 type Props = {
   section: SettingsSectionId
   onSectionChange: (id: SettingsSectionId) => void
+  className?: string
 }
 
-export function SettingsConfigNav({ section, onSectionChange }: Props) {
+export function SettingsConfigNav({
+  section,
+  onSectionChange,
+  className,
+}: Props) {
   return (
-    <Sidebar
-      collapsible="none"
-      className="w-full shrink-0 border-sidebar-border bg-sidebar sm:w-52 sm:max-w-52 sm:border-y-0 sm:border-l sm:border-r"
+    <nav
+      className={cn(
+        "w-full shrink-0 border-b border-border pb-6 sm:w-44 sm:border-b-0 sm:border-r sm:pr-8 sm:pb-0 lg:w-48",
+        className
+      )}
+      aria-label="Configurações"
     >
-      <SidebarHeader className="border-b border-sidebar-border px-3 py-2.5">
-        <p className="text-xs font-medium tracking-wide text-sidebar-foreground/70 uppercase">
-          Configurações
-        </p>
-      </SidebarHeader>
-      <SidebarContent className="px-2 py-2">
-        <SidebarGroup className="p-0">
-          <SidebarGroupLabel className="px-2 text-[11px]">Áreas</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {settingsNavItems.map((item) => {
-                const Icon = item.icon
-                return (
-                  <SidebarMenuItem key={item.id}>
-                    <SidebarMenuButton
-                      type="button"
-                      isActive={section === item.id}
-                      size="sm"
-                      onClick={() => onSectionChange(item.id)}
-                    >
-                      <Icon aria-hidden />
-                      <span>{item.title}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                )
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
+      <p className="text-[11px] font-medium tracking-[0.14em] text-stat-label uppercase">
+        Configurações
+      </p>
+
+      <p className="mt-8 mb-3 text-[11px] font-medium tracking-[0.08em] text-stat-muted uppercase">
+        Áreas
+      </p>
+
+      <ul className="divide-y divide-border">
+        {settingsNavItems.map((item) => {
+          const active = section === item.id
+          return (
+            <li key={item.id}>
+              <button
+                type="button"
+                onClick={() => onSectionChange(item.id)}
+                className={cn(
+                  "w-full py-2.5 text-left text-sm transition-colors",
+                  active
+                    ? "font-medium text-stat-value"
+                    : "text-stat-muted hover:text-stat-value"
+                )}
+                aria-current={active ? "page" : undefined}
+              >
+                {item.title}
+              </button>
+            </li>
+          )
+        })}
+      </ul>
+    </nav>
   )
 }

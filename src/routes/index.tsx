@@ -1,6 +1,6 @@
 import { createFileRoute, redirect, isRedirect } from "@tanstack/react-router"
 
-import { LoginForm } from "@/features/auth/components/login-form"
+import { LoginPage } from "@/features/auth/components/login-page"
 import {
   authMeQueryKey,
   fetchAuthMe,
@@ -24,12 +24,5 @@ export const Route = createFileRoute("/")({
 })
 
 function LoginRoute() {
-  return (
-    <div className="relative flex min-h-svh items-center justify-center overflow-hidden p-6">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,var(--color-primary),transparent_55%)]/8" />
-      <div className="relative mx-auto w-full max-w-md">
-        <LoginForm />
-      </div>
-    </div>
-  )
+  return <LoginPage />
 }

@@ -28,12 +28,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   }
 
   return (
-    <Sidebar variant="inset" {...props}>
+    <Sidebar variant="floating" collapsible="icon" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" render={<Link to="/dashboard" />}>
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground ring-1 ring-sidebar-primary/30">
                 {nav.brandIcon}
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -45,8 +45,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={nav.navMain} />
-        {/* <NavProjects projects={nav.projects} /> */}
+        <NavMain items={nav.navMain} label="Principal" />
+        <NavMain items={nav.navImport} label="Importação" />
         <NavSecondary items={nav.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

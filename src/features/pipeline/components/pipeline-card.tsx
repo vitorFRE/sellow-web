@@ -56,7 +56,7 @@ export function PipelineCardDragPreview({ lead }: { lead: Lead }) {
   return (
     <PipelineLeadCardContent
       lead={lead}
-      className="w-[280px] cursor-grabbing shadow-md"
+      className="w-[256px] cursor-grabbing ring-1 ring-primary/20"
     />
   )
 }

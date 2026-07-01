@@ -6,7 +6,7 @@ import {
 } from "@dnd-kit/react"
 import { toast } from "sonner"
 
-import { HttpError } from "@/features/auth/api/auth-api"
+import { getAdminForbiddenMessage } from "@/shared/lib/api-errors"
 import type { Lead, LeadStatus } from "@/features/leads/types/lead"
 import type { LeadListFilterState } from "@/features/leads/types/lead-list-query"
 import { LeadDetailSheet } from "@/features/lead-detail/components/lead-detail-sheet"
@@ -51,12 +51,12 @@ export function PipelineKanban({ filters }: Props) {
 
   React.useEffect(() => {
     if (!isError || !error) return
-    const message =
-      error instanceof HttpError && error.status === 403
-        ? "Acesso negado. Esta área é restrita a administradores."
-        : error instanceof Error
-          ? error.message
-          : "Não foi possível carregar o pipeline."
+    const message = getAdminForbiddenMessage(
+      error,
+      error instanceof Error
+        ? error.message
+        : "Não foi possível carregar o pipeline."
+    )
     toast.error(message, { id: "pipeline-board-load" })
   }, [isError, error])
 
@@ -123,7 +123,7 @@ export function PipelineKanban({ filters }: Props) {
   return (
     <DragDropProvider onDragEnd={onDragEnd}>
       <div className="flex h-full min-h-0 min-w-0 w-full flex-col overflow-hidden">
-        <div className="pipeline-scroll flex h-full min-h-0 min-w-0 flex-1 flex-row items-stretch gap-3 overflow-x-auto overflow-y-hidden pb-2">
+        <div className="flex h-full min-h-0 min-w-0 flex-1 flex-row items-stretch gap-2.5 overflow-x-auto overflow-y-hidden">
           {PIPELINE_STATUSES.map((status, i) => (
             <PipelineColumn
               key={status}

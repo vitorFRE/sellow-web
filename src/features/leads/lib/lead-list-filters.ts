@@ -89,3 +89,49 @@ export function countActiveLeadListFilters(
   if (f.sortDir !== defaults.sortDir) n += 1
   return n
 }
+
+export type LeadListAdvancedFilterState = Pick<
+  LeadListFilterState,
+  "minTotalScore" | "minReviewsCount" | "hasWebsite" | "sortBy" | "sortDir"
+>
+
+export function pickAdvancedLeadListFilters(
+  f: LeadListFilterState
+): LeadListAdvancedFilterState {
+  return {
+    minTotalScore: f.minTotalScore,
+    minReviewsCount: f.minReviewsCount,
+    hasWebsite: f.hasWebsite,
+    sortBy: f.sortBy,
+    sortDir: f.sortDir,
+  }
+}
+
+export function defaultAdvancedLeadListFilters(): LeadListAdvancedFilterState {
+  return pickAdvancedLeadListFilters(DEFAULT_LEAD_LIST_FILTER_STATE)
+}
+
+export function mergeAdvancedLeadListFilters(
+  f: LeadListFilterState,
+  advanced: LeadListAdvancedFilterState
+): LeadListFilterState {
+  return { ...f, ...advanced }
+}
+
+export function countAdvancedLeadListFilters(f: LeadListFilterState): number {
+  return countActiveLeadListFilters(f, { includeStatus: false }) -
+    (f.search.trim() !== "" ? 1 : 0)
+}
+
+export function advancedLeadListFiltersEqual(
+  a: LeadListAdvancedFilterState,
+  b: LeadListAdvancedFilterState
+): boolean {
+  return (
+    a.minTotalScore === b.minTotalScore &&
+    a.minReviewsCount === b.minReviewsCount &&
+    a.hasWebsite === b.hasWebsite &&
+    a.sortBy === b.sortBy &&
+    a.sortDir === b.sortDir
+  )
+}

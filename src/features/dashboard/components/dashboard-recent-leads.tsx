@@ -4,7 +4,7 @@ import { IconChevronRight, IconClock, IconUsers } from "@tabler/icons-react"
 import { LeadStatusBadge } from "@/features/leads/components/lead-status-badge"
 import type { Lead } from "@/features/leads/types/lead"
 import { leadInitials } from "@/features/dashboard/lib/dashboard-ui-utils"
-import { formatDashboardDateTime } from "@/features/dashboard/lib/format-dashboard-datetime"
+import { formatDateTimeShortPtOrDash } from "@/shared/lib/format-datetime"
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
@@ -19,13 +19,8 @@ export function DashboardRecentLeads({ leads, className }: Props) {
   const preview = leads.slice(0, PREVIEW_COUNT)
 
   return (
-    <section
-      className={cn(
-        "group/card flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm",
-        className
-      )}
-    >
-      <div className="border-b border-border/50 bg-muted/20 px-5 py-4 dark:bg-muted/10">
+    <section className={cn("flex flex-col overflow-hidden", className)}>
+      <div className="dashboard-panel-header">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
             <span className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-primary/12 text-primary">
@@ -44,7 +39,7 @@ export function DashboardRecentLeads({ leads, className }: Props) {
             to="/dashboard/leads"
             className={cn(
               buttonVariants({ variant: "ghost", size: "sm" }),
-              "h-8 gap-0.5 pr-1 pl-2 text-xs text-muted-foreground hover:text-foreground"
+              "gap-0.5 pr-1 pl-2 text-xs text-muted-foreground hover:text-foreground"
             )}
           >
             Ver todos
@@ -80,7 +75,7 @@ export function DashboardRecentLeads({ leads, className }: Props) {
                     </p>
                     <p className="mt-0.5 flex items-center gap-1 text-[11px] text-muted-foreground">
                       <IconClock className="size-3 shrink-0 opacity-70" aria-hidden />
-                      {formatDashboardDateTime(lead.updatedAt)}
+                      {formatDateTimeShortPtOrDash(lead.updatedAt)}
                     </p>
                   </div>
                   <LeadStatusBadge status={lead.status} />

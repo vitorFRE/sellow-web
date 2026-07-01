@@ -78,7 +78,7 @@ export function LossReasonCreateDialog({
                 maxLength={2000}
                 disabled={isPending}
                 className={cn(
-                  "min-h-20 w-full resize-y rounded-4xl border border-input bg-input/30 px-3 py-2 text-sm transition-colors outline-none",
+                  "min-h-20 w-full resize-y rounded-lg border border-input bg-input/30 px-3 py-2 text-sm transition-colors outline-none",
                   "placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                 )}
               />

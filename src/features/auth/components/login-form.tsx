@@ -2,7 +2,10 @@ import { useState } from "react"
 import { useForm } from "@tanstack/react-form"
 import { useRouter } from "@tanstack/react-router"
 import { useQueryClient } from "@tanstack/react-query"
+import { IconArrowRight } from "@tabler/icons-react"
+import { motion, useReducedMotion } from "motion/react"
 
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { login } from "@/features/auth/api/auth-api"
@@ -10,11 +13,25 @@ import { tokenStorage } from "@/features/auth/lib/token-storage"
 import { loginSchema } from "@/features/auth/schemas/login-schema"
 import { authMeQueryKey } from "@/features/auth/queries/auth-query-keys"
 
+const reveal = {
+  hidden: { opacity: 0, y: 12 },
+  visible: (delay: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      delay,
+      ease: [0.16, 1, 0.3, 1] as const,
+    },
+  }),
+}
+
 export function LoginForm() {
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [isPending, setIsPending] = useState(false)
   const router = useRouter()
   const queryClient = useQueryClient()
+  const reduce = useReducedMotion()
 
   const form = useForm({
     defaultValues: { email: "", password: "" },
@@ -39,17 +56,34 @@ export function LoginForm() {
     },
   })
 
+  const MotionDiv = reduce ? "div" : motion.div
+
   return (
-    <div className="w-full rounded-4xl border bg-card p-6 shadow-sm sm:p-8">
-      <div className="mb-6 space-y-2 text-center">
-        <h1 className="text-xl font-medium">Entrar na sua conta</h1>
-        <p className="text-sm text-muted-foreground">
-          Acesse o painel para acompanhar leads, propostas e relatorios.
-        </p>
-      </div>
+    <div className="w-full space-y-8">
+      <MotionDiv
+        className="space-y-4"
+        {...(reduce
+          ? {}
+          : {
+              initial: "hidden",
+              animate: "visible",
+              custom: 0,
+              variants: reveal,
+            })}
+      >
+        <Badge>Painel</Badge>
+        <div className="space-y-2">
+          <h1 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+            Bem-vindo de volta
+          </h1>
+          <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
+            Entre com e-mail e senha para acessar leads, propostas e relatorios.
+          </p>
+        </div>
+      </MotionDiv>
 
       <form
-        className="space-y-4"
+        className="space-y-6"
         onSubmit={(event) => {
           event.preventDefault()
           form.handleSubmit()
@@ -63,7 +97,17 @@ export function LoginForm() {
               field.state.meta.isTouched && !field.state.meta.isValid
             const errors = field.state.meta.errors.map((e) => e?.message)
             return (
-              <div className="space-y-2">
+              <MotionDiv
+                className="space-y-2"
+                {...(reduce
+                  ? {}
+                  : {
+                      initial: "hidden",
+                      animate: "visible",
+                      custom: 0.06,
+                      variants: reveal,
+                    })}
+              >
                 <label htmlFor={field.name} className="text-sm font-medium">
                   E-mail
                 </label>
@@ -81,7 +125,7 @@ export function LoginForm() {
                 {isInvalid ? (
                   <p className="text-sm text-destructive">{errors.at(0)}</p>
                 ) : null}
-              </div>
+              </MotionDiv>
             )
           }}
         />
@@ -93,7 +137,17 @@ export function LoginForm() {
               field.state.meta.isTouched && !field.state.meta.isValid
             const errors = field.state.meta.errors.map((e) => e?.message)
             return (
-              <div className="space-y-2">
+              <MotionDiv
+                className="space-y-2"
+                {...(reduce
+                  ? {}
+                  : {
+                      initial: "hidden",
+                      animate: "visible",
+                      custom: 0.12,
+                      variants: reveal,
+                    })}
+              >
                 <label htmlFor={field.name} className="text-sm font-medium">
                   Senha
                 </label>
@@ -104,27 +158,41 @@ export function LoginForm() {
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(event) => field.handleChange(event.target.value)}
-                  placeholder="Sua senha"
+                  placeholder="Digite sua senha"
                   autoComplete="current-password"
                   aria-invalid={isInvalid}
                 />
                 {isInvalid ? (
                   <p className="text-sm text-destructive">{errors.at(0)}</p>
                 ) : null}
-              </div>
+              </MotionDiv>
             )
           }}
         />
 
         {submitError ? (
-          <p className="rounded-3xl border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          <p className="rounded-3xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
             {submitError}
           </p>
         ) : null}
 
-        <Button type="submit" className="w-full" disabled={isPending}>
-          {isPending ? "Entrando..." : "Entrar"}
-        </Button>
+        <MotionDiv
+          {...(reduce
+            ? {}
+            : {
+                initial: "hidden",
+                animate: "visible",
+                custom: 0.18,
+                variants: reveal,
+              })}
+        >
+          <Button type="submit" size="lg" className="w-full" disabled={isPending}>
+            {isPending ? "Entrando..." : "Entrar"}
+            {!isPending ? (
+              <IconArrowRight className="size-4" stroke={2} aria-hidden />
+            ) : null}
+          </Button>
+        </MotionDiv>
       </form>
     </div>
   )

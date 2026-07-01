@@ -32,12 +32,13 @@ export function LeadsTablePagination({ table, total }: Props) {
 
   return (
     <div className="flex flex-col gap-4 border-t px-1 py-4 sm:flex-row sm:items-center sm:justify-between">
-      <p className="text-sm text-muted-foreground">
+      <p className="text-sm text-stat-muted">
         Mostrando{" "}
-        <span className="font-medium text-foreground">
+        <span className="font-medium tabular-nums text-stat-value">
           {from}–{to}
         </span>{" "}
-        de <span className="font-medium text-foreground">{total}</span>
+        de{" "}
+        <span className="font-medium tabular-nums text-stat-value">{total}</span>
       </p>
 
       <div className="flex flex-wrap items-center gap-2 sm:justify-end">

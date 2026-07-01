@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useQuery } from "@tanstack/react-query"
 
-import { HttpError } from "@/features/auth/api/auth-api"
+import { isAdminForbidden } from "@/shared/lib/api-errors"
 import {
   Dialog,
   DialogContent,
@@ -53,9 +53,7 @@ export function PipelineLostReasonDialog({
     onConfirm(reasonId, trimmed.length ? trimmed : null)
   }
 
-  const is403 =
-    reasonsQuery.error instanceof HttpError &&
-    reasonsQuery.error.status === 403
+  const is403 = isAdminForbidden(reasonsQuery.error)
 
   const canSubmit =
     !isPending &&
