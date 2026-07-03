@@ -1,3 +1,5 @@
+export type ImportReview = "POSITIVE" | "NEGATIVE"
+
 export type LeadStatus =
   | "IMPORTED"
   | "NEW"
@@ -29,6 +31,7 @@ export type Lead = {
   website?: string | null
   categoryName?: string | null
   googlePlaceId?: string | null
+  importReview?: ImportReview | null
   createdAt: string
   updatedAt: string
 }

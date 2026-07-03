@@ -10,13 +10,14 @@ type ToParamsOptions = {
 export function leadListFiltersToParams(
   f: LeadListFilterState,
   options: ToParamsOptions
-): Pick<
+):   Pick<
   ListLeadsParams,
   | "search"
   | "status"
   | "minTotalScore"
   | "minReviewsCount"
   | "hasWebsite"
+  | "importReview"
   | "sortBy"
   | "sortDir"
 > {
@@ -27,6 +28,7 @@ export function leadListFiltersToParams(
     | "minTotalScore"
     | "minReviewsCount"
     | "hasWebsite"
+    | "importReview"
     | "sortBy"
     | "sortDir"
   > = {
@@ -56,6 +58,8 @@ export function leadListFiltersToParams(
   if (f.hasWebsite === "yes") params.hasWebsite = true
   if (f.hasWebsite === "no") params.hasWebsite = false
 
+  if (f.importReview !== "all") params.importReview = f.importReview
+
   return params
 }
 
@@ -69,6 +73,7 @@ export function pipelineFiltersQueryPayload(
     minTotalScore: p.minTotalScore,
     minReviewsCount: p.minReviewsCount,
     hasWebsite: p.hasWebsite,
+    importReview: p.importReview,
     sortBy: p.sortBy,
     sortDir: p.sortDir,
   }
@@ -85,6 +90,7 @@ export function countActiveLeadListFilters(
   if (f.minTotalScore.trim() !== "") n += 1
   if (f.minReviewsCount.trim() !== "") n += 1
   if (f.hasWebsite !== "all") n += 1
+  if (f.importReview !== "all") n += 1
   if (f.sortBy !== defaults.sortBy) n += 1
   if (f.sortDir !== defaults.sortDir) n += 1
   return n
@@ -92,7 +98,12 @@ export function countActiveLeadListFilters(
 
 export type LeadListAdvancedFilterState = Pick<
   LeadListFilterState,
-  "minTotalScore" | "minReviewsCount" | "hasWebsite" | "sortBy" | "sortDir"
+  | "minTotalScore"
+  | "minReviewsCount"
+  | "hasWebsite"
+  | "importReview"
+  | "sortBy"
+  | "sortDir"
 >
 
 export function pickAdvancedLeadListFilters(
@@ -102,6 +113,7 @@ export function pickAdvancedLeadListFilters(
     minTotalScore: f.minTotalScore,
     minReviewsCount: f.minReviewsCount,
     hasWebsite: f.hasWebsite,
+    importReview: f.importReview,
     sortBy: f.sortBy,
     sortDir: f.sortDir,
   }
@@ -131,6 +143,7 @@ export function advancedLeadListFiltersEqual(
     a.minTotalScore === b.minTotalScore &&
     a.minReviewsCount === b.minReviewsCount &&
     a.hasWebsite === b.hasWebsite &&
+    a.importReview === b.importReview &&
     a.sortBy === b.sortBy &&
     a.sortDir === b.sortDir
   )

@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
-import type { LeadListFilterState } from "@/features/leads/types/lead-list-query"
+import type { LeadImportReviewFilter, LeadListFilterState } from "@/features/leads/types/lead-list-query"
 
 const sortByLabels: Record<LeadListFilterState["sortBy"], string> = {
   updatedAt: "Atualizado em",
@@ -26,6 +26,13 @@ const hasWebsiteLabels: Record<LeadListFilterState["hasWebsite"], string> = {
 const sortDirLabels: Record<LeadListFilterState["sortDir"], string> = {
   asc: "Crescente",
   desc: "Decrescente",
+}
+
+const importReviewLabels: Record<LeadImportReviewFilter, string> = {
+  all: "Todos",
+  POSITIVE: "Aprovados",
+  NEGATIVE: "Reprovados",
+  UNEVALUATED: "Não avaliados",
 }
 
 const fieldInputClass =
@@ -45,6 +52,7 @@ type Props = {
   value: LeadListFilterState
   onChange: (next: LeadListFilterState) => void
   hideSearch?: boolean
+  showImportReviewFilter?: boolean
   className?: string
 }
 
@@ -52,6 +60,7 @@ export function LeadListFilterFields({
   value,
   onChange,
   hideSearch = false,
+  showImportReviewFilter = false,
   className,
 }: Props) {
   return (
@@ -128,6 +137,36 @@ export function LeadListFilterFields({
           </SelectContent>
         </Select>
       </div>
+
+      {showImportReviewFilter ? (
+        <div className="grid min-w-0 gap-2">
+          <span className={fieldLabelClass}>Triagem</span>
+          <Select
+            value={value.importReview}
+            onValueChange={(v) =>
+              onChange({
+                ...value,
+                importReview: v as LeadImportReviewFilter,
+              })
+            }
+          >
+            <SelectTrigger className={fieldSelectTriggerClass} size="sm">
+              <SelectValue>
+                {importReviewLabels[value.importReview]}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent className="border-stat-card-border bg-stat-board text-stat-value">
+              {(
+                Object.keys(importReviewLabels) as LeadImportReviewFilter[]
+              ).map((k) => (
+                <SelectItem key={k} value={k}>
+                  {importReviewLabels[k]}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      ) : null}
 
       <div className="grid min-w-0 gap-2">
         <span className={fieldLabelClass}>Ordenar por</span>

@@ -6,6 +6,7 @@ import { getAdminForbiddenMessage, getApiErrorMessage } from "@/shared/lib/api-e
 import {
   deleteLead,
   listLeads,
+  updateLeadImportReview,
   updateLeadStatus,
 } from "@/features/leads/api/leads-api"
 import { LeadListFiltersPanel } from "@/features/leads/components/lead-list-filters-panel"
@@ -15,7 +16,7 @@ import { PromoteLeadDialog } from "@/features/leads/components/promote-lead-dial
 import { leadListFiltersToParams } from "@/features/leads/lib/lead-list-filters"
 import type { LeadListAdvancedFilterState } from "@/features/leads/lib/lead-list-filters"
 import { leadsListQueryKey } from "@/features/leads/queries/leads-query-keys"
-import type { Lead } from "@/features/leads/types/lead"
+import type { ImportReview, Lead } from "@/features/leads/types/lead"
 import {
   DEFAULT_LEAD_LIST_FILTER_STATE,
   type LeadListFilterState,
@@ -66,14 +67,19 @@ export function LeadsListPage() {
     []
   )
 
-  const query = useQuery({
-    queryKey: [
+  const listQueryKey = React.useMemo(
+    () => [
       ...leadsListQueryKey,
       "imported",
       pagination.pageIndex,
       pagination.pageSize,
       filterParams,
     ],
+    [pagination.pageIndex, pagination.pageSize, filterParams]
+  )
+
+  const query = useQuery({
+    queryKey: listQueryKey,
     queryFn: () =>
       listLeads({
         page: pagination.pageIndex + 1,
@@ -105,6 +111,58 @@ export function LeadsListPage() {
     },
   })
 
+  const reviewMutation = useMutation({
+    mutationFn: ({
+      id,
+      importReview,
+    }: {
+      id: string
+      importReview: ImportReview | null
+    }) => updateLeadImportReview(id, { importReview }),
+    onMutate: async ({ id, importReview }) => {
+      await queryClient.cancelQueries({ queryKey: listQueryKey })
+      const previous = queryClient.getQueryData<{
+        data: Lead[]
+        meta: { total: number; page: number; limit: number; totalPages: number }
+      }>(listQueryKey)
+
+      if (previous) {
+        const filter = appliedFilters.importReview
+        const matchesFilter =
+          filter === "all" ||
+          (filter === "UNEVALUATED" && importReview == null) ||
+          filter === importReview
+
+        const nextData = matchesFilter
+          ? previous.data.map((lead) =>
+              lead.id === id ? { ...lead, importReview } : lead
+            )
+          : previous.data.filter((lead) => lead.id !== id)
+
+        queryClient.setQueryData(listQueryKey, {
+          ...previous,
+          data: nextData,
+          meta: {
+            ...previous.meta,
+            total: matchesFilter
+              ? previous.meta.total
+              : Math.max(0, previous.meta.total - 1),
+          },
+        })
+      }
+
+      return { previous }
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(listQueryKey, context.previous)
+      }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["leads"] })
+    },
+  })
+
   const onDeleteLead = React.useCallback(
     (id: string) => {
       deleteMutation.mutate(id)
@@ -125,6 +183,13 @@ export function LeadsListPage() {
     promoteMutation.mutate(promoteTarget.id)
   }, [promoteMutation, promoteTarget])
 
+  const onImportReviewChange = React.useCallback(
+    (id: string, importReview: ImportReview | null) => {
+      reviewMutation.mutate({ id, importReview })
+    },
+    [reviewMutation]
+  )
+
   const deletingLeadId =
     deleteMutation.isPending && deleteMutation.variables != null
       ? deleteMutation.variables
@@ -133,6 +198,11 @@ export function LeadsListPage() {
   const promotingLeadId =
     promoteMutation.isPending && promoteMutation.variables != null
       ? promoteMutation.variables
+      : null
+
+  const reviewingLeadId =
+    reviewMutation.isPending && reviewMutation.variables != null
+      ? reviewMutation.variables.id
       : null
 
   const meta = query.data?.meta
@@ -148,6 +218,7 @@ export function LeadsListPage() {
           <LeadListFiltersPanel
             applied={appliedFilters}
             panelTitle="Refinar importados"
+            showImportReviewFilter
             className="border-b border-border"
             onSearchChange={(search) =>
               setAppliedFilters((prev) => ({ ...prev, search }))
@@ -171,6 +242,15 @@ export function LeadsListPage() {
               {getApiErrorMessage(
                 promoteMutation.error,
                 "Não foi possível enviar o lead ao pipeline."
+              )}
+            </p>
+          ) : null}
+
+          {reviewMutation.isError ? (
+            <p className="pt-4 text-sm text-destructive">
+              {getApiErrorMessage(
+                reviewMutation.error,
+                "Não foi possível salvar a triagem do lead."
               )}
             </p>
           ) : null}
@@ -199,6 +279,8 @@ export function LeadsListPage() {
               variant="imported"
               onPromoteToPipeline={onPromoteToPipeline}
               promotingLeadId={promotingLeadId}
+              onImportReviewChange={onImportReviewChange}
+              reviewingLeadId={reviewingLeadId}
               emptyMessage="Nenhum lead importado. Use Importar JSON para adicionar leads do Google Maps."
             />
           </div>

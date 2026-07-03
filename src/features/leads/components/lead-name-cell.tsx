@@ -15,7 +15,7 @@ export function LeadNameCell({ lead }: { lead: Lead }) {
   const showMeta = hasScore || hasReviews
 
   return (
-    <div className="flex min-w-0 max-w-56 flex-col gap-1">
+    <div className="flex min-w-0 flex-col gap-1">
       <span className="truncate font-medium">{lead.name}</span>
       {showMeta ? (
         <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-muted-foreground">

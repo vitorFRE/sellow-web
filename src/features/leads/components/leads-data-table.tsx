@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/table"
 import { createLeadsColumns } from "@/features/leads/components/leads-columns"
 import { LeadsTablePagination } from "@/features/leads/components/leads-table-pagination"
-import type { Lead } from "@/features/leads/types/lead"
+import type { ImportReview, Lead } from "@/features/leads/types/lead"
 
 type Props = {
   data: Lead[]
@@ -31,6 +31,8 @@ type Props = {
   variant?: "default" | "imported"
   onPromoteToPipeline?: (id: string) => void
   promotingLeadId?: string | null
+  onImportReviewChange?: (id: string, importReview: ImportReview | null) => void
+  reviewingLeadId?: string | null
   emptyMessage?: string
 }
 
@@ -46,6 +48,8 @@ export function LeadsDataTable({
   variant = "default",
   onPromoteToPipeline,
   promotingLeadId,
+  onImportReviewChange,
+  reviewingLeadId,
   emptyMessage = "Nenhum lead encontrado.",
 }: Props) {
   const columns = React.useMemo(
@@ -56,8 +60,18 @@ export function LeadsDataTable({
         variant,
         onPromoteToPipeline,
         promotingLeadId,
+        onImportReviewChange,
+        reviewingLeadId,
       }),
-    [onDeleteLead, deletingLeadId, variant, onPromoteToPipeline, promotingLeadId]
+    [
+      onDeleteLead,
+      deletingLeadId,
+      variant,
+      onPromoteToPipeline,
+      promotingLeadId,
+      onImportReviewChange,
+      reviewingLeadId,
+    ]
   )
 
   const table = useReactTable({

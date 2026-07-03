@@ -28,6 +28,7 @@ type Props = {
   onSearchChange: (search: string) => void
   onApplyAdvanced: (advanced: LeadListAdvancedFilterState) => void
   panelTitle: string
+  showImportReviewFilter?: boolean
   className?: string
 }
 
@@ -36,6 +37,7 @@ export function LeadListFiltersPanel({
   onSearchChange,
   onApplyAdvanced,
   panelTitle,
+  showImportReviewFilter = false,
   className,
 }: Props) {
   const [open, setOpen] = React.useState(false)
@@ -132,6 +134,7 @@ export function LeadListFiltersPanel({
             value={draftFilters}
             onChange={(next) => setDraft(pickAdvancedLeadListFilters(next))}
             hideSearch
+            showImportReviewFilter={showImportReviewFilter}
           />
 
           <div className="mt-4 flex flex-col-reverse gap-2 border-t border-border pt-4 sm:flex-row sm:justify-end">

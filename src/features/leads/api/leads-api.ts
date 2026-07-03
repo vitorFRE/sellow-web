@@ -2,10 +2,12 @@ import { authorizedFetch } from "@/features/auth/lib/authorized-fetch"
 import { getApiBaseUrl } from "@/shared/config/api-base"
 import { parseApiJson } from "@/shared/api/parse-api-json"
 import type {
+  ImportReview,
   Lead,
   LeadStatus,
   LeadsListResponse,
 } from "@/features/leads/types/lead"
+import type { LeadImportReviewFilter } from "@/features/leads/types/lead-list-query"
 import type {
   LeadSortBy,
   LeadSortDir,
@@ -30,6 +32,7 @@ export type ListLeadsParams = {
   minTotalScore?: number
   minReviewsCount?: number
   hasWebsite?: boolean
+  importReview?: Exclude<LeadImportReviewFilter, "all">
   sortBy?: LeadSortBy
   sortDir?: LeadSortDir
 }
@@ -62,6 +65,9 @@ export async function listLeads(
   if (params.hasWebsite === false) {
     searchParams.set("hasWebsite", "false")
   }
+  if (params.importReview != null) {
+    searchParams.set("importReview", params.importReview)
+  }
   const sortBy = params.sortBy ?? "updatedAt"
   const sortDir = params.sortDir ?? "desc"
   searchParams.set("sortBy", sortBy)
@@ -77,6 +83,25 @@ export type UpdateLeadStatusBody = {
   status: LeadStatus
   lossReasonId?: string | null
   lossReasonNote?: string | null
+}
+
+export type UpdateLeadImportReviewBody = {
+  importReview: ImportReview | null
+}
+
+export async function updateLeadImportReview(
+  id: string,
+  body: UpdateLeadImportReviewBody
+): Promise<Lead> {
+  const res = await authorizedFetch(
+    `${getApiBaseUrl()}/leads/${id}/import-review`,
+    {
+      method: "PATCH",
+      body: JSON.stringify({ importReview: body.importReview }),
+    }
+  )
+  const parsed = await parseApiJson<Lead | { data: Lead }>(res)
+  return unwrapLeadResponse(parsed)
 }
 
 export async function updateLeadStatus(
