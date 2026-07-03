@@ -1,6 +1,6 @@
 import type { UseQueryResult } from "@tanstack/react-query"
 
-import { isAdminForbidden, getApiErrorMessage } from "@/shared/lib/api-errors"
+import { isWorkspaceForbidden, getApiErrorMessage } from "@/shared/lib/api-errors"
 import {
   Select,
   SelectContent,
@@ -30,13 +30,12 @@ export function PipelineLostReasonDialogFields({
   onReasonChange,
   onNoteChange,
 }: Props) {
-  const is403 = isAdminForbidden(reasonsQuery.error)
+  const is403 = isWorkspaceForbidden(reasonsQuery.error)
 
   if (is403) {
     return (
       <p className="text-sm text-muted-foreground">
-        Apenas administradores podem carregar motivos de perda. Peça acesso ou
-        use outro fluxo.
+        Você não tem permissão para carregar motivos de perda neste workspace.
       </p>
     )
   }

@@ -9,9 +9,10 @@ type Props = {
   onEdit: (r: LossReason) => void
   onDelete: (r: LossReason) => void
   busy?: boolean
+  canWrite?: boolean
 }
 
-export function LossReasonRow({ reason, onEdit, onDelete, busy }: Props) {
+export function LossReasonRow({ reason, onEdit, onDelete, busy, canWrite = true }: Props) {
   const description = reason.description?.trim()
 
   return (
@@ -29,28 +30,32 @@ export function LossReasonRow({ reason, onEdit, onDelete, busy }: Props) {
       </div>
 
       <div className="flex shrink-0 items-center gap-1 self-start">
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          className="h-8 gap-1.5 px-2 text-stat-muted hover:text-stat-value"
-          disabled={busy}
-          onClick={() => onEdit(reason)}
-        >
-          <IconPencil className="size-3.5" aria-hidden />
-          Editar
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          className="h-8 gap-1.5 px-2 text-destructive hover:bg-destructive/10 hover:text-destructive"
-          disabled={busy}
-          onClick={() => onDelete(reason)}
-        >
-          <IconTrash className="size-3.5" aria-hidden />
-          Excluir
-        </Button>
+        {canWrite ? (
+          <>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-8 gap-1.5 px-2 text-stat-muted hover:text-stat-value"
+              disabled={busy}
+              onClick={() => onEdit(reason)}
+            >
+              <IconPencil className="size-3.5" aria-hidden />
+              Editar
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-8 gap-1.5 px-2 text-destructive hover:bg-destructive/10 hover:text-destructive"
+              disabled={busy}
+              onClick={() => onDelete(reason)}
+            >
+              <IconTrash className="size-3.5" aria-hidden />
+              Excluir
+            </Button>
+          </>
+        ) : null}
       </div>
     </li>
   )

@@ -10,28 +10,33 @@ import {
   type LeadFollowUpResponse,
 } from "@/features/lead-detail/api/lead-detail-api"
 import { leadFollowUpQueryKey } from "@/features/lead-detail/queries/lead-detail-query-keys"
+import { invalidateWorkspaceLeadsQueries } from "@/features/workspaces/lib/business-query-key"
+import { useActiveWorkspace } from "@/features/workspaces/hooks/use-active-workspace"
 
 export function useLeadFollowUpQuery(leadId: string | null) {
+  const { workspaceId } = useActiveWorkspace()
+
   return useQuery({
-    queryKey: leadFollowUpQueryKey(leadId ?? ""),
+    queryKey: leadFollowUpQueryKey(workspaceId ?? "", leadId ?? ""),
     queryFn: () => getLeadFollowUp(leadId as string),
-    enabled: Boolean(leadId),
+    enabled: Boolean(leadId && workspaceId),
     staleTime: 30_000,
   })
 }
 
 export function useSaveLeadFollowUpMutation(leadId: string) {
   const queryClient = useQueryClient()
+  const { workspaceId } = useActiveWorkspace()
 
   return useMutation({
     mutationFn: (input: LeadFollowUpInput) => putLeadFollowUp(leadId, input),
     onSuccess: (data) => {
+      if (!workspaceId) return
       queryClient.setQueryData<LeadFollowUpResponse | null>(
-        leadFollowUpQueryKey(leadId),
+        leadFollowUpQueryKey(workspaceId, leadId),
         data
       )
-      void queryClient.invalidateQueries({ queryKey: ["leads", "pipeline"] })
-      void queryClient.invalidateQueries({ queryKey: ["leads", "list"] })
+      void invalidateWorkspaceLeadsQueries(queryClient, workspaceId)
       toast.success("Follow-up salvo.", { id: `lead-follow-up-${leadId}` })
     },
     onError: (err) => {
@@ -46,16 +51,17 @@ export function useSaveLeadFollowUpMutation(leadId: string) {
 
 export function useDeleteLeadFollowUpMutation(leadId: string) {
   const queryClient = useQueryClient()
+  const { workspaceId } = useActiveWorkspace()
 
   return useMutation({
     mutationFn: () => deleteLeadFollowUp(leadId),
     onSuccess: () => {
+      if (!workspaceId) return
       queryClient.setQueryData<LeadFollowUpResponse | null>(
-        leadFollowUpQueryKey(leadId),
+        leadFollowUpQueryKey(workspaceId, leadId),
         null
       )
-      void queryClient.invalidateQueries({ queryKey: ["leads", "pipeline"] })
-      void queryClient.invalidateQueries({ queryKey: ["leads", "list"] })
+      void invalidateWorkspaceLeadsQueries(queryClient, workspaceId)
       toast.success("Follow-up removido.", { id: `lead-follow-up-${leadId}` })
     },
     onError: (err) => {

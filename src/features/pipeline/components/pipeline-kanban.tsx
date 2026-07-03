@@ -6,7 +6,7 @@ import {
 } from "@dnd-kit/react"
 import { toast } from "sonner"
 
-import { getAdminForbiddenMessage } from "@/shared/lib/api-errors"
+import { getWorkspaceForbiddenMessage } from "@/shared/lib/api-errors"
 import type { Lead, LeadStatus } from "@/features/leads/types/lead"
 import type { LeadListFilterState } from "@/features/leads/types/lead-list-query"
 import { LeadDetailSheet } from "@/features/lead-detail/components/lead-detail-sheet"
@@ -20,6 +20,7 @@ import {
 import { PipelineLostReasonDialog } from "@/features/pipeline/components/pipeline-lost-reason-dialog"
 import { usePipelineBoardQueries } from "@/features/pipeline/hooks/use-pipeline-board-queries"
 import { usePipelineMoveLead } from "@/features/pipeline/hooks/use-pipeline-move-lead"
+import { useWorkspacePermissions } from "@/features/workspaces/hooks/use-workspace-permissions"
 
 type LostPending = {
   id: string
@@ -32,6 +33,7 @@ type Props = {
 }
 
 export function PipelineKanban({ filters }: Props) {
+  const { canWriteLeads } = useWorkspacePermissions()
   const { byStatus, metaByStatus, isError, error, queries } =
     usePipelineBoardQueries(filters)
   const moveLead = usePipelineMoveLead(filters)
@@ -51,7 +53,7 @@ export function PipelineKanban({ filters }: Props) {
 
   React.useEffect(() => {
     if (!isError || !error) return
-    const message = getAdminForbiddenMessage(
+    const message = getWorkspaceForbiddenMessage(
       error,
       error instanceof Error
         ? error.message
@@ -72,6 +74,7 @@ export function PipelineKanban({ filters }: Props) {
 
   const onDragEnd = React.useCallback(
     (event: DragEndEvent) => {
+      if (!canWriteLeads) return
       if (event.canceled) return
       const source = event.operation.source
       const target = event.operation.target
@@ -100,7 +103,7 @@ export function PipelineKanban({ filters }: Props) {
         fromStatus: from,
       })
     },
-    [leadsById, moveLead]
+    [canWriteLeads, leadsById, moveLead]
   )
 
   const confirmLost = React.useCallback(
@@ -133,6 +136,7 @@ export function PipelineKanban({ filters }: Props) {
               meta={metaByStatus[status]}
               isLoading={queries[i]?.isLoading ?? false}
               onOpenLeadDetail={openLeadDetail}
+              canDrag={canWriteLeads}
             />
           ))}
         </div>

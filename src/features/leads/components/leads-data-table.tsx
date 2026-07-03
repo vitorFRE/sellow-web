@@ -34,6 +34,8 @@ type Props = {
   onImportReviewChange?: (id: string, importReview: ImportReview | null) => void
   reviewingLeadId?: string | null
   emptyMessage?: string
+  canWriteLeads?: boolean
+  canDeleteLeads?: boolean
 }
 
 export function LeadsDataTable({
@@ -51,6 +53,8 @@ export function LeadsDataTable({
   onImportReviewChange,
   reviewingLeadId,
   emptyMessage = "Nenhum lead encontrado.",
+  canWriteLeads = true,
+  canDeleteLeads = true,
 }: Props) {
   const columns = React.useMemo(
     () =>
@@ -62,6 +66,8 @@ export function LeadsDataTable({
         promotingLeadId,
         onImportReviewChange,
         reviewingLeadId,
+        canWriteLeads,
+        canDeleteLeads,
       }),
     [
       onDeleteLead,
@@ -71,6 +77,8 @@ export function LeadsDataTable({
       promotingLeadId,
       onImportReviewChange,
       reviewingLeadId,
+      canWriteLeads,
+      canDeleteLeads,
     ]
   )
 

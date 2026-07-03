@@ -1,5 +1,5 @@
-import { settingsNavItems } from "@/features/settings/config/settings-nav"
 import type { SettingsSectionId } from "@/features/settings/config/settings-nav"
+import { useVisibleSettingsNavGroups } from "@/features/settings/hooks/use-visible-settings-nav-items"
 import { cn } from "@/lib/utils"
 
 type Props = {
@@ -13,6 +13,8 @@ export function SettingsConfigNav({
   onSectionChange,
   className,
 }: Props) {
+  const visibleGroups = useVisibleSettingsNavGroups()
+
   return (
     <nav
       className={cn(
@@ -21,36 +23,47 @@ export function SettingsConfigNav({
       )}
       aria-label="Configurações"
     >
-      <p className="text-[11px] font-medium tracking-[0.14em] text-stat-label uppercase">
+      <p className="font-mono text-[10px] tracking-[0.16em] text-stat-label uppercase">
         Configurações
       </p>
 
-      <p className="mt-8 mb-3 text-[11px] font-medium tracking-[0.08em] text-stat-muted uppercase">
-        Áreas
-      </p>
-
-      <ul className="divide-y divide-border">
-        {settingsNavItems.map((item) => {
-          const active = section === item.id
-          return (
-            <li key={item.id}>
-              <button
-                type="button"
-                onClick={() => onSectionChange(item.id)}
-                className={cn(
-                  "w-full py-2.5 text-left text-sm transition-colors",
-                  active
-                    ? "font-medium text-stat-value"
-                    : "text-stat-muted hover:text-stat-value"
-                )}
-                aria-current={active ? "page" : undefined}
-              >
-                {item.title}
-              </button>
-            </li>
-          )
-        })}
-      </ul>
+      <div className="mt-8">
+        {visibleGroups.map((group, index) => (
+          <div
+            key={group.id}
+            className={cn(index > 0 && "mt-8 border-t border-border pt-8")}
+          >
+            <p
+              className="mb-3 select-none font-mono text-[10px] tracking-[0.16em] text-stat-label/60 uppercase"
+              aria-hidden
+            >
+              {group.label}
+            </p>
+            <ul>
+              {group.items.map((item) => {
+                const active = section === item.id
+                return (
+                  <li key={item.id}>
+                    <button
+                      type="button"
+                      onClick={() => onSectionChange(item.id)}
+                      className={cn(
+                        "w-full border-l-2 py-2.5 pl-3 text-left text-sm transition-colors",
+                        active
+                          ? "border-stat-value font-medium text-stat-value"
+                          : "border-transparent text-stat-muted hover:border-border hover:text-stat-value"
+                      )}
+                      aria-current={active ? "page" : undefined}
+                    >
+                      {item.title}
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+        ))}
+      </div>
     </nav>
   )
 }

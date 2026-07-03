@@ -9,15 +9,18 @@ export function PipelineKanbanCard({
   lead,
   columnStatus,
   onOpenDetail,
+  canDrag = true,
 }: {
   lead: Lead
   columnStatus: LeadStatus
   onOpenDetail?: (lead: Lead, columnStatus: LeadStatus) => void
+  canDrag?: boolean
 }) {
   const sessionHadDrag = React.useRef(false)
   const { ref, isDragging } = useDraggable({
     id: lead.id,
     data: { status: columnStatus },
+    disabled: !canDrag,
   })
 
   React.useEffect(() => {
@@ -44,7 +47,8 @@ export function PipelineKanbanCard({
       <PipelineLeadCardContent
         lead={lead}
         className={cn(
-          "cursor-grab transition-opacity active:cursor-grabbing",
+          canDrag ? "cursor-grab active:cursor-grabbing" : "cursor-pointer",
+          "transition-opacity",
           isDragging && "opacity-40"
         )}
       />

@@ -1,7 +1,6 @@
 import * as React from "react"
 import { useQuery } from "@tanstack/react-query"
 
-import { isAdminForbidden } from "@/shared/lib/api-errors"
 import {
   Dialog,
   DialogContent,
@@ -11,9 +10,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { PipelineLostReasonDialogFields } from "@/features/pipeline/components/pipeline-lost-reason-dialog-fields"
+import { isWorkspaceForbidden } from "@/shared/lib/api-errors"
 import { listLossReasons } from "@/features/settings/api/loss-reasons-api"
+import { PipelineLostReasonDialogFields } from "@/features/pipeline/components/pipeline-lost-reason-dialog-fields"
 import { lossReasonsQueryKey } from "@/features/settings/queries/loss-reasons-query-keys"
+import { useActiveWorkspace } from "@/features/workspaces/hooks/use-active-workspace"
 
 type Props = {
   open: boolean
@@ -30,6 +31,7 @@ export function PipelineLostReasonDialog({
   onCancel,
   onConfirm,
 }: Props) {
+  const { workspaceId } = useActiveWorkspace()
   const [reasonId, setReasonId] = React.useState("")
   const [note, setNote] = React.useState("")
 
@@ -41,9 +43,9 @@ export function PipelineLostReasonDialog({
   }, [open])
 
   const reasonsQuery = useQuery({
-    queryKey: lossReasonsQueryKey,
+    queryKey: lossReasonsQueryKey(workspaceId ?? ""),
     queryFn: listLossReasons,
-    enabled: open,
+    enabled: open && Boolean(workspaceId),
   })
 
   const submit = (e: React.FormEvent) => {
@@ -53,7 +55,7 @@ export function PipelineLostReasonDialog({
     onConfirm(reasonId, trimmed.length ? trimmed : null)
   }
 
-  const is403 = isAdminForbidden(reasonsQuery.error)
+  const is403 = isWorkspaceForbidden(reasonsQuery.error)
 
   const canSubmit =
     !isPending &&

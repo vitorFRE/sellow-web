@@ -37,7 +37,11 @@ export async function getMe(): Promise<AuthUser> {
       Authorization: `Bearer ${accessToken}`,
     },
   })
-  return parseApiJson<AuthUser>(res)
+  const user = await parseApiJson<AuthUser>(res)
+  return {
+    ...user,
+    workspaces: user.workspaces ?? [],
+  }
 }
 
 export async function logout(): Promise<void> {

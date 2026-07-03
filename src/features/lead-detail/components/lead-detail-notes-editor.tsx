@@ -11,6 +11,7 @@ type Props = {
   dirty: boolean
   isLoading?: boolean
   isSaving?: boolean
+  readOnly?: boolean
   className?: string
 }
 
@@ -22,9 +23,10 @@ export function LeadDetailNotesEditor({
   dirty,
   isLoading = false,
   isSaving = false,
+  readOnly = false,
   className,
 }: Props) {
-  const disabled = isLoading || isSaving
+  const disabled = isLoading || isSaving || readOnly
 
   return (
     <section className={cn("space-y-3", className)}>
@@ -53,32 +55,38 @@ export function LeadDetailNotesEditor({
         />
       </label>
       <div className="flex flex-wrap items-center gap-2">
-        <Button
-          type="button"
-          size="sm"
-          onClick={onSave}
-          disabled={!dirty || disabled}
-        >
-          {isSaving ? (
-            <>
-              <IconLoader2 className="size-3.5 animate-spin" aria-hidden />
-              Salvando…
-            </>
-          ) : (
-            "Salvar anotações"
-          )}
-        </Button>
-        <Button
-          type="button"
-          size="sm"
-          variant="outline"
-          onClick={onCancel}
-          disabled={!dirty || disabled}
-        >
-          Cancelar
-        </Button>
-        {dirty ? (
-          <span className="text-[11px] text-muted-foreground">Alterações não salvas</span>
+        {!readOnly ? (
+          <>
+            <Button
+              type="button"
+              size="sm"
+              onClick={onSave}
+              disabled={!dirty || disabled}
+            >
+              {isSaving ? (
+                <>
+                  <IconLoader2 className="size-3.5 animate-spin" aria-hidden />
+                  Salvando…
+                </>
+              ) : (
+                "Salvar anotações"
+              )}
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={onCancel}
+              disabled={!dirty || disabled}
+            >
+              Cancelar
+            </Button>
+            {dirty ? (
+              <span className="text-[11px] text-muted-foreground">
+                Alterações não salvas
+              </span>
+            ) : null}
+          </>
         ) : null}
       </div>
     </section>

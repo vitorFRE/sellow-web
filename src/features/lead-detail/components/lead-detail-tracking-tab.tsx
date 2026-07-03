@@ -8,12 +8,14 @@ import {
   useLeadNotesQuery,
   useSaveLeadNotesMutation,
 } from "@/features/lead-detail/hooks/use-lead-notes"
+import { useWorkspacePermissions } from "@/features/workspaces/hooks/use-workspace-permissions"
 
 type Props = {
   leadId: string
 }
 
 export function LeadDetailTrackingTab({ leadId }: Props) {
+  const { canWriteLeads } = useWorkspacePermissions()
   const notesQuery = useLeadNotesQuery(leadId)
   const saveNotes = useSaveLeadNotesMutation(leadId)
 
@@ -51,11 +53,12 @@ export function LeadDetailTrackingTab({ leadId }: Props) {
         dirty={notesDirty}
         isLoading={notesQuery.isLoading}
         isSaving={saveNotes.isPending}
+        readOnly={!canWriteLeads}
         onSave={handleSaveNotes}
         onCancel={() => setNotesDraft(notesSaved)}
       />
 
-      <LeadDetailFollowUpPanel leadId={leadId} />
+      <LeadDetailFollowUpPanel leadId={leadId} readOnly={!canWriteLeads} />
     </div>
   )
 }

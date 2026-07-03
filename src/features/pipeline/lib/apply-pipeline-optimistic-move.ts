@@ -2,6 +2,7 @@ import type { QueryClient, QueryKey } from "@tanstack/react-query"
 
 import type { LeadListFilterState } from "@/features/leads/types/lead-list-query"
 import type { Lead, LeadStatus, LeadsListResponse } from "@/features/leads/types/lead"
+import { leadsBusinessPrefix } from "@/features/leads/queries/leads-query-keys"
 import { pipelineColumnQueryKey } from "@/features/pipeline/queries/pipeline-query-keys"
 import { bumpLeadsListMeta } from "@/features/pipeline/lib/pipeline-leads-list-meta"
 
@@ -13,9 +14,12 @@ export type PipelineMoveVariables = {
   lossReasonNote?: string | null
 }
 
-export function snapshotLeadsQueries(queryClient: QueryClient) {
+export function snapshotLeadsQueries(
+  queryClient: QueryClient,
+  workspaceId: string
+) {
   return queryClient.getQueriesData<LeadsListResponse>({
-    queryKey: ["leads"],
+    queryKey: leadsBusinessPrefix(workspaceId),
   })
 }
 
@@ -31,6 +35,7 @@ export function restoreLeadsQueries(
 /** Atualiza o cache das colunas origem/destino sem esperar o refetch. */
 export function applyOptimisticPipelineMove(
   queryClient: QueryClient,
+  workspaceId: string,
   {
     id,
     status: toStatus,
@@ -42,7 +47,7 @@ export function applyOptimisticPipelineMove(
 ): void {
   if (fromStatus === toStatus) return
 
-  const fromKey = pipelineColumnQueryKey(fromStatus, filters)
+  const fromKey = pipelineColumnQueryKey(workspaceId, fromStatus, filters)
   const fromData = queryClient.getQueryData<LeadsListResponse>(fromKey)
   if (!fromData) return
 
@@ -66,7 +71,7 @@ export function applyOptimisticPipelineMove(
     meta: bumpLeadsListMeta(fromData.meta, -1),
   })
 
-  const toKey = pipelineColumnQueryKey(toStatus, filters)
+  const toKey = pipelineColumnQueryKey(workspaceId, toStatus, filters)
   const toData = queryClient.getQueryData<LeadsListResponse>(toKey)
   const limit = fromData.meta.limit
 

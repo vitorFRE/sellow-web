@@ -4,11 +4,16 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 type Props = {
-  onOpenCreateLead: () => void
+  onOpenCreateLead?: () => void
   className?: string
+  canWriteLeads?: boolean
 }
 
-export function PipelineHeader({ onOpenCreateLead, className }: Props) {
+export function PipelineHeader({
+  onOpenCreateLead,
+  className,
+  canWriteLeads = true,
+}: Props) {
   return (
     <header
       className={cn(
@@ -29,15 +34,17 @@ export function PipelineHeader({ onOpenCreateLead, className }: Props) {
         </p>
       </div>
 
-      <Button
-        type="button"
-        size="sm"
-        className="shrink-0 gap-2"
-        onClick={onOpenCreateLead}
-      >
-        <IconPlus className="size-4" aria-hidden />
-        Novo lead
-      </Button>
+      {canWriteLeads && onOpenCreateLead ? (
+        <Button
+          type="button"
+          size="sm"
+          className="shrink-0 gap-2"
+          onClick={onOpenCreateLead}
+        >
+          <IconPlus className="size-4" aria-hidden />
+          Novo lead
+        </Button>
+      ) : null}
     </header>
   )
 }

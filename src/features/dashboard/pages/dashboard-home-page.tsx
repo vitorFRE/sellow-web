@@ -7,7 +7,8 @@ import { DashboardReveal } from "@/features/dashboard/components/dashboard-revea
 import { dashboardOverviewQueryKey } from "@/features/dashboard/queries/dashboard-query-keys"
 import type { LeadStatus } from "@/features/leads/types/lead"
 import { KANBAN_LEAD_STATUSES } from "@/features/leads/config/lead-status"
-import { getAdminForbiddenMessage } from "@/shared/lib/api-errors"
+import { getWorkspaceForbiddenMessage } from "@/shared/lib/api-errors"
+import { useActiveWorkspace } from "@/features/workspaces/hooks/use-active-workspace"
 import { Skeleton } from "@/components/ui/skeleton"
 
 function normalizeCounts(
@@ -39,9 +40,12 @@ function HomeSkeleton() {
 }
 
 export function DashboardHomePage() {
+  const { workspaceId } = useActiveWorkspace()
+
   const query = useQuery({
-    queryKey: dashboardOverviewQueryKey,
+    queryKey: dashboardOverviewQueryKey(workspaceId ?? ""),
     queryFn: getDashboardOverview,
+    enabled: Boolean(workspaceId),
     staleTime: 60_000,
   })
 
@@ -50,7 +54,7 @@ export function DashboardHomePage() {
   }
 
   if (query.isError) {
-    const msg = getAdminForbiddenMessage(
+    const msg = getWorkspaceForbiddenMessage(
       query.error,
       query.error instanceof Error
         ? query.error.message

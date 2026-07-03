@@ -1,3 +1,4 @@
+import * as React from "react"
 import { useQueryClient } from "@tanstack/react-query"
 import { useRouter } from "@tanstack/react-router"
 import {
@@ -28,6 +29,7 @@ import {
   IconSparkles,
 } from "@tabler/icons-react"
 import { performLogout } from "@/features/auth/lib/logout"
+import { ComingSoonBadge } from "@/shared/components/coming-soon-badge"
 
 function initials(name: string) {
   const parts = name.trim().split(/\s+/)
@@ -35,6 +37,23 @@ function initials(name: string) {
     return (parts[0][0] + parts[1][0]).toUpperCase()
   }
   return name.slice(0, 2).toUpperCase() || "?"
+}
+
+type ComingSoonMenuItemProps = {
+  icon: React.ReactNode
+  label: string
+}
+
+function ComingSoonMenuItem({ icon, label }: ComingSoonMenuItemProps) {
+  return (
+    <DropdownMenuItem disabled className="justify-between opacity-80">
+      <span className="flex items-center gap-2">
+        {icon}
+        {label}
+      </span>
+      <ComingSoonBadge />
+    </DropdownMenuItem>
+  )
 }
 
 export function NavUser({
@@ -98,21 +117,21 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <IconSparkles />
-                Novidades
-              </DropdownMenuItem>
+              <ComingSoonMenuItem
+                icon={<IconSparkles className="size-4" />}
+                label="Novidades"
+              />
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <IconRosetteDiscountCheck />
-                Conta
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconBell />
-                Notificações
-              </DropdownMenuItem>
+              <ComingSoonMenuItem
+                icon={<IconRosetteDiscountCheck className="size-4" />}
+                label="Conta"
+              />
+              <ComingSoonMenuItem
+                icon={<IconBell className="size-4" />}
+                label="Notificações"
+              />
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>

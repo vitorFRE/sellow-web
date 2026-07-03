@@ -8,6 +8,7 @@ import {
   patchLossReason,
 } from "@/features/settings/api/loss-reasons-api"
 import { lossReasonsQueryKey } from "@/features/settings/queries/loss-reasons-query-keys"
+import { useActiveWorkspace } from "@/features/workspaces/hooks/use-active-workspace"
 
 type Args = {
   onCreateSuccess: () => void
@@ -21,11 +22,15 @@ export function useLossReasonsMutations({
   onDeleteClose,
 }: Args) {
   const queryClient = useQueryClient()
+  const { workspaceId } = useActiveWorkspace()
 
   const createMutation = useMutation({
     mutationFn: createLossReason,
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: lossReasonsQueryKey })
+      if (!workspaceId) return
+      await queryClient.invalidateQueries({
+        queryKey: lossReasonsQueryKey(workspaceId),
+      })
       onCreateSuccess()
       toast.success("Motivo criado.")
     },
@@ -43,7 +48,10 @@ export function useLossReasonsMutations({
       body: { name: string; description: string | null }
     }) => patchLossReason(id, body),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: lossReasonsQueryKey })
+      if (!workspaceId) return
+      await queryClient.invalidateQueries({
+        queryKey: lossReasonsQueryKey(workspaceId),
+      })
       onEditClose()
       toast.success("Motivo atualizado.")
     },
@@ -55,7 +63,10 @@ export function useLossReasonsMutations({
   const deleteMutation = useMutation({
     mutationFn: deleteLossReason,
     onSuccess: async (msg) => {
-      await queryClient.invalidateQueries({ queryKey: lossReasonsQueryKey })
+      if (!workspaceId) return
+      await queryClient.invalidateQueries({
+        queryKey: lossReasonsQueryKey(workspaceId),
+      })
       onDeleteClose()
       toast.success(msg)
     },

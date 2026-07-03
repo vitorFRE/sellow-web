@@ -10,7 +10,14 @@ import { Input } from "@/components/ui/input"
 import { login } from "@/features/auth/api/auth-api"
 import { tokenStorage } from "@/features/auth/lib/token-storage"
 import { loginSchema } from "@/features/auth/schemas/login-schema"
-import { authMeQueryKey } from "@/features/auth/queries/auth-query-keys"
+import {
+  authMeQueryKey,
+  fetchAuthMe,
+} from "@/features/auth/queries/auth-me-query"
+import {
+  applyActiveWorkspace,
+  resolveActiveWorkspace,
+} from "@/features/workspaces/lib/resolve-active-workspace"
 
 const reveal = {
   hidden: { opacity: 0, y: 12 },
@@ -41,7 +48,20 @@ export function LoginForm() {
       try {
         const data = await login(value.email, value.password)
         tokenStorage.setTokens(data.accessToken, data.refreshToken)
-        queryClient.setQueryData(authMeQueryKey, data.user)
+        const me = await fetchAuthMe()
+        queryClient.setQueryData(authMeQueryKey, me)
+
+        const resolution = resolveActiveWorkspace(me.workspaces ?? [])
+        if (resolution.status === "needs_selection") {
+          await router.navigate({ to: "/dashboard/selecionar-workspace" })
+          return
+        }
+        if (resolution.status === "no_access") {
+          setSubmitError("Sua conta não possui acesso a nenhum workspace.")
+          return
+        }
+
+        applyActiveWorkspace(resolution.workspaceId)
         await router.navigate({ to: "/dashboard" })
       } catch (err) {
         setSubmitError(

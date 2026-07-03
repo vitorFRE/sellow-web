@@ -11,11 +11,12 @@ import { pipelineColumnQueryKey } from "@/features/pipeline/queries/pipeline-que
 
 export function replaceLeadInPipelineColumn(
   queryClient: QueryClient,
+  workspaceId: string,
   columnStatus: LeadStatus,
   serverLead: Lead,
   filters: LeadListFilterState
 ): void {
-  const key = pipelineColumnQueryKey(columnStatus, filters)
+  const key = pipelineColumnQueryKey(workspaceId, columnStatus, filters)
   const data = queryClient.getQueryData<LeadsListResponse>(key)
   if (!data) return
   queryClient.setQueryData<LeadsListResponse>(key, {
@@ -26,6 +27,7 @@ export function replaceLeadInPipelineColumn(
 
 export function reconcilePipelineCacheWithServerLead(
   queryClient: QueryClient,
+  workspaceId: string,
   serverLead: Lead,
   destinationColumn: LeadStatus,
   filters: LeadListFilterState
@@ -33,6 +35,7 @@ export function reconcilePipelineCacheWithServerLead(
   if (serverLead.status === destinationColumn) {
     replaceLeadInPipelineColumn(
       queryClient,
+      workspaceId,
       destinationColumn,
       serverLead,
       filters
@@ -41,7 +44,7 @@ export function reconcilePipelineCacheWithServerLead(
   }
 
   for (const status of PIPELINE_STATUSES) {
-    const key = pipelineColumnQueryKey(status, filters)
+    const key = pipelineColumnQueryKey(workspaceId, status, filters)
     const data = queryClient.getQueryData<LeadsListResponse>(key)
     if (!data?.data.some((l) => l.id === serverLead.id)) continue
     queryClient.setQueryData<LeadsListResponse>(key, {
@@ -51,12 +54,12 @@ export function reconcilePipelineCacheWithServerLead(
     break
   }
 
-  const destKey = pipelineColumnQueryKey(serverLead.status, filters)
+  const destKey = pipelineColumnQueryKey(workspaceId, serverLead.status, filters)
   const destData = queryClient.getQueryData<LeadsListResponse>(destKey)
   const limit =
     destData?.meta.limit ??
     queryClient.getQueryData<LeadsListResponse>(
-      pipelineColumnQueryKey(destinationColumn, filters)
+      pipelineColumnQueryKey(workspaceId, destinationColumn, filters)
     )?.meta.limit ??
     PIPELINE_PAGE_SIZE
 

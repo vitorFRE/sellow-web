@@ -13,8 +13,8 @@ import type { LeadFollowUpView } from "@/features/lead-detail/types/lead-detail-
 
 type Props = {
   followUp: LeadFollowUpView
-  onEdit: () => void
-  onClear: () => void
+  onEdit?: () => void
+  onClear?: () => void
   isClearing?: boolean
   className?: string
 }
@@ -31,35 +31,41 @@ export function LeadDetailFollowUpSummaryCard({
     : "A combinar"
 
   return (
-    <div className={cn("relative rounded-xl border border-border/80 bg-primary/5 p-4 pr-12", className)}>
-      <div className="absolute top-3 right-2">
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            render={
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                className="h-8 w-8"
-                aria-label="Menu do follow-up"
-              />
-            }
-          >
-            <IconDotsVertical className="size-4" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="min-w-44">
-            <DropdownMenuItem onClick={onEdit} disabled={isClearing}>
-              Editar follow-up
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              variant="destructive"
-              onClick={onClear}
-              disabled={isClearing}
+    <div className={cn("relative rounded-xl border border-border/80 bg-primary/5 p-4", onEdit || onClear ? "pr-12" : "", className)}>
+      {onEdit || onClear ? (
+        <div className="absolute top-3 right-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  className="h-8 w-8"
+                  aria-label="Menu do follow-up"
+                />
+              }
             >
-              {isClearing ? "Removendo…" : "Limpar agendamento"}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+              <IconDotsVertical className="size-4" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="min-w-44">
+              {onEdit ? (
+                <DropdownMenuItem onClick={onEdit} disabled={isClearing}>
+                  Editar follow-up
+                </DropdownMenuItem>
+              ) : null}
+              {onClear ? (
+                <DropdownMenuItem
+                  variant="destructive"
+                  onClick={onClear}
+                  disabled={isClearing}
+                >
+                  {isClearing ? "Removendo…" : "Limpar agendamento"}
+                </DropdownMenuItem>
+              ) : null}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      ) : null}
 
       <div className="flex items-start gap-2">
         <IconCalendarClock className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden />

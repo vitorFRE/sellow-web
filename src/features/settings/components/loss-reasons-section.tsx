@@ -2,7 +2,7 @@ import * as React from "react"
 import { useQuery } from "@tanstack/react-query"
 import { IconPlus } from "@tabler/icons-react"
 
-import { isAdminForbidden, getApiErrorMessage } from "@/shared/lib/api-errors"
+import { getApiErrorMessage } from "@/shared/lib/api-errors"
 import { listLossReasons } from "@/features/settings/api/loss-reasons-api"
 import { LossReasonCreateDialog } from "@/features/settings/components/loss-reason-create-dialog"
 import { LossReasonDeleteDialog } from "@/features/settings/components/loss-reason-delete-dialog"
@@ -11,10 +11,14 @@ import { LossReasonRow } from "@/features/settings/components/loss-reason-row"
 import { useLossReasonsMutations } from "@/features/settings/hooks/use-loss-reasons-mutations"
 import { lossReasonsQueryKey } from "@/features/settings/queries/loss-reasons-query-keys"
 import type { LossReason } from "@/features/settings/types/loss-reason"
+import { useActiveWorkspace } from "@/features/workspaces/hooks/use-active-workspace"
+import { useWorkspacePermissions } from "@/features/workspaces/hooks/use-workspace-permissions"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 
 export function LossReasonsSection() {
+  const { workspaceId } = useActiveWorkspace()
+  const { canWriteLossReasons } = useWorkspacePermissions()
   const [createOpen, setCreateOpen] = React.useState(false)
   const [editing, setEditing] = React.useState<LossReason | null>(null)
   const [deleting, setDeleting] = React.useState<LossReason | null>(null)
@@ -27,8 +31,9 @@ export function LossReasonsSection() {
     })
 
   const listQuery = useQuery({
-    queryKey: lossReasonsQueryKey,
+    queryKey: lossReasonsQueryKey(workspaceId ?? ""),
     queryFn: listLossReasons,
+    enabled: Boolean(workspaceId),
   })
 
   const busyId =
@@ -37,16 +42,6 @@ export function LossReasonsSection() {
       : deleteMutation.isPending && deleteMutation.variables
         ? deleteMutation.variables
         : null
-
-  const is403 = isAdminForbidden(listQuery.error)
-
-  if (is403) {
-    return (
-      <p className="text-sm leading-relaxed text-stat-muted">
-        Apenas administradores podem gerenciar motivos de perda.
-      </p>
-    )
-  }
 
   return (
     <section className="dashboard-stat-board flex min-w-0 flex-col p-6">
@@ -59,26 +54,30 @@ export function LossReasonsSection() {
             Motivos de perda
           </h2>
           <p className="max-w-lg text-sm leading-relaxed text-stat-muted">
-            Usados ao marcar um lead como perdido. Nomes são únicos no sistema.
+            Usados ao marcar um lead como perdido. Nomes são únicos no workspace.
           </p>
         </div>
-        <Button
-          type="button"
-          size="sm"
-          className="shrink-0 gap-1.5 self-start"
-          onClick={() => setCreateOpen(true)}
-        >
-          <IconPlus className="size-4" aria-hidden />
-          Novo motivo
-        </Button>
+        {canWriteLossReasons ? (
+          <Button
+            type="button"
+            size="sm"
+            className="shrink-0 gap-1.5 self-start"
+            onClick={() => setCreateOpen(true)}
+          >
+            <IconPlus className="size-4" aria-hidden />
+            Novo motivo
+          </Button>
+        ) : null}
       </header>
 
-      <LossReasonCreateDialog
-        open={createOpen}
-        onOpenChange={setCreateOpen}
-        isPending={createMutation.isPending}
-        onCreate={(payload) => createMutation.mutate(payload)}
-      />
+      {canWriteLossReasons ? (
+        <LossReasonCreateDialog
+          open={createOpen}
+          onOpenChange={setCreateOpen}
+          isPending={createMutation.isPending}
+          onCreate={(payload) => createMutation.mutate(payload)}
+        />
+      ) : null}
 
       {listQuery.isLoading ? (
         <ul className="divide-y divide-border">
@@ -108,6 +107,7 @@ export function LossReasonsSection() {
                 key={r.id}
                 reason={r}
                 busy={busyId === r.id}
+                canWrite={canWriteLossReasons}
                 onEdit={setEditing}
                 onDelete={setDeleting}
               />
@@ -116,31 +116,35 @@ export function LossReasonsSection() {
         </ul>
       )}
 
-      <LossReasonEditDialog
-        open={editing != null}
-        onOpenChange={(o) => !o && setEditing(null)}
-        reason={editing}
-        isPending={
-          patchMutation.isPending && patchMutation.variables?.id === editing?.id
-        }
-        onSave={(body) => {
-          if (!editing) return
-          patchMutation.mutate({ id: editing.id, body })
-        }}
-      />
+      {canWriteLossReasons ? (
+        <>
+          <LossReasonEditDialog
+            open={editing != null}
+            onOpenChange={(o) => !o && setEditing(null)}
+            reason={editing}
+            isPending={
+              patchMutation.isPending && patchMutation.variables?.id === editing?.id
+            }
+            onSave={(body) => {
+              if (!editing) return
+              patchMutation.mutate({ id: editing.id, body })
+            }}
+          />
 
-      <LossReasonDeleteDialog
-        open={deleting != null}
-        onOpenChange={(o) => !o && setDeleting(null)}
-        reasonName={deleting?.name ?? ""}
-        isPending={
-          deleteMutation.isPending && deleteMutation.variables === deleting?.id
-        }
-        onConfirm={() => {
-          if (!deleting) return
-          deleteMutation.mutate(deleting.id)
-        }}
-      />
+          <LossReasonDeleteDialog
+            open={deleting != null}
+            onOpenChange={(o) => !o && setDeleting(null)}
+            reasonName={deleting?.name ?? ""}
+            isPending={
+              deleteMutation.isPending && deleteMutation.variables === deleting?.id
+            }
+            onConfirm={() => {
+              if (!deleting) return
+              deleteMutation.mutate(deleting.id)
+            }}
+          />
+        </>
+      ) : null}
     </section>
   )
 }

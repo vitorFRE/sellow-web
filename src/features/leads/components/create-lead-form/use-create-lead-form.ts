@@ -3,6 +3,8 @@ import { useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 
 import { getApiErrorMessage } from "@/shared/lib/api-errors"
+import { useActiveWorkspace } from "@/features/workspaces/hooks/use-active-workspace"
+import { invalidateWorkspaceLeadsQueries } from "@/features/workspaces/lib/business-query-key"
 import { createLead } from "@/features/leads/api/leads-api"
 import { buildCreateLeadBody } from "@/features/leads/lib/build-create-lead-body"
 import {
@@ -24,6 +26,7 @@ export function useCreateLeadForm({
   onSubmitError,
 }: Args) {
   const queryClient = useQueryClient()
+  const { workspaceId } = useActiveWorkspace()
 
   return useForm({
     defaultValues: createLeadDefaultValues,
@@ -35,7 +38,9 @@ export function useCreateLeadForm({
       onSubmitStart()
       try {
         await createLead(buildCreateLeadBody(value))
-        await queryClient.invalidateQueries({ queryKey: ["leads"] })
+        if (workspaceId) {
+          await invalidateWorkspaceLeadsQueries(queryClient, workspaceId)
+        }
         toast.success("Lead criado.")
         formApi.reset()
         onCreated()

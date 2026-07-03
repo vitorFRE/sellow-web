@@ -4,6 +4,8 @@ import { useRouter } from "@tanstack/react-router"
 
 import { getApiErrorMessage } from "@/shared/lib/api-errors"
 import { importGoogleMapsLeads } from "@/features/leads/api/leads-api"
+import { invalidateWorkspaceLeadsQueries } from "@/features/workspaces/lib/business-query-key"
+import { useActiveWorkspace } from "@/features/workspaces/hooks/use-active-workspace"
 import {
   ImportGoogleMapsActions,
   ImportGoogleMapsHeader,
@@ -29,6 +31,7 @@ function ImportAlert({ children }: { children: React.ReactNode }) {
 export function ImportGoogleMapsPage() {
   const router = useRouter()
   const queryClient = useQueryClient()
+  const { workspaceId } = useActiveWorkspace()
   const [text, setText] = React.useState("")
   const [result, setResult] = React.useState<GoogleMapsImportResult | null>(
     null
@@ -40,7 +43,9 @@ export function ImportGoogleMapsPage() {
     mutationFn: importGoogleMapsLeads,
     onSuccess: async (data) => {
       setResult(data)
-      await queryClient.invalidateQueries({ queryKey: ["leads"] })
+      if (workspaceId) {
+        await invalidateWorkspaceLeadsQueries(queryClient, workspaceId)
+      }
     },
   })
 

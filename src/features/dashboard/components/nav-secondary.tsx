@@ -8,6 +8,14 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { ComingSoonBadge } from "@/shared/components/coming-soon-badge"
+
+export type NavSecondaryItem = {
+  title: string
+  icon: React.ReactNode
+  url?: string
+  comingSoon?: boolean
+}
 
 function linkFor(url: string) {
   if (url.startsWith("#")) {
@@ -20,11 +28,7 @@ export function NavSecondary({
   items,
   ...props
 }: {
-  items: {
-    title: string
-    url: string
-    icon: React.ReactNode
-  }[]
+  items: NavSecondaryItem[]
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
   return (
     <SidebarGroup {...props}>
@@ -32,10 +36,22 @@ export function NavSecondary({
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton size="sm" render={linkFor(item.url)}>
-                {item.icon}
-                <span>{item.title}</span>
-              </SidebarMenuButton>
+              {item.comingSoon || !item.url ? (
+                <SidebarMenuButton
+                  size="sm"
+                  disabled
+                  className="pointer-events-none opacity-80"
+                >
+                  {item.icon}
+                  <span>{item.title}</span>
+                  <ComingSoonBadge className="ml-auto" />
+                </SidebarMenuButton>
+              ) : (
+                <SidebarMenuButton size="sm" render={linkFor(item.url)}>
+                  {item.icon}
+                  <span>{item.title}</span>
+                </SidebarMenuButton>
+              )}
             </SidebarMenuItem>
           ))}
         </SidebarMenu>

@@ -2,6 +2,7 @@ import {
   IconFileImport,
   IconHome,
   IconLayoutKanban,
+  IconMessageCircle,
   IconPhoto,
   IconSettings,
   IconTemplate,
@@ -40,6 +41,11 @@ export const dashboardSidebarData = {
     },
   ],
   navSecondary: [
+    {
+      title: "Feedback",
+      icon: <IconMessageCircle />,
+      comingSoon: true,
+    },
     {
       title: "Configurações",
       url: "/dashboard/configuracoes",

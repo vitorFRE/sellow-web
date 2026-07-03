@@ -4,21 +4,33 @@ import { IconArrowLeft } from "@tabler/icons-react"
 import { Button } from "@/components/ui/button"
 import { DashboardReveal } from "@/features/dashboard/components/dashboard-reveal"
 import { LossReasonsSection } from "@/features/settings/components/loss-reasons-section"
+import { MembersSection } from "@/features/settings/components/members-section/members-section"
 import { SettingsConfigNav } from "@/features/settings/components/settings-config-nav"
 import { SettingsMobileMenuList } from "@/features/settings/components/settings-mobile-menu-list"
+import { WorkspacesAdminSection } from "@/features/settings/components/workspaces-admin-section/workspaces-admin-section"
 import type { SettingsSectionId } from "@/features/settings/config/settings-nav"
+import { useVisibleSettingsNavItems } from "@/features/settings/hooks/use-visible-settings-nav-items"
 import { useIsMobile } from "@/shared/hooks/use-mobile"
 
 function renderSection(section: SettingsSectionId) {
   if (section === "loss-reasons") return <LossReasonsSection />
+  if (section === "members") return <MembersSection />
+  if (section === "workspaces-admin") return <WorkspacesAdminSection />
   return null
 }
 
 export function ConfiguracoesSettingsPage() {
   const isMobile = useIsMobile()
+  const visibleItems = useVisibleSettingsNavItems()
   const [section, setSection] = React.useState<SettingsSectionId>("loss-reasons")
   const [mobilePane, setMobilePane] = React.useState<"menu" | "detail">("menu")
   const prevMobile = React.useRef(isMobile)
+
+  React.useEffect(() => {
+    if (!visibleItems.some((item) => item.id === section)) {
+      setSection(visibleItems[0]?.id ?? "loss-reasons")
+    }
+  }, [section, visibleItems])
 
   React.useEffect(() => {
     if (isMobile && !prevMobile.current) setMobilePane("menu")

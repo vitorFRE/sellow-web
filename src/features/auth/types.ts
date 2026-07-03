@@ -1,9 +1,16 @@
+import type { UserWorkspace } from "@/features/workspaces/types"
+
+export type GlobalRole = "USER" | "SUPER_ADMIN"
+
 export type AuthUser = {
   id: string
   email: string
   name: string
-  role: string
+  role: GlobalRole
   isActive: boolean
+  createdAt?: string
+  updatedAt?: string
+  workspaces: UserWorkspace[]
 }
 
 export type LoginResponse = {

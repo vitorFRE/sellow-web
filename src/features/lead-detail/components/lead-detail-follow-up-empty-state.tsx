@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 type Props = {
-  onSchedule: () => void
+  onSchedule?: () => void
   className?: string
 }
 
@@ -25,7 +25,12 @@ export function LeadDetailFollowUpEmptyState({ onSchedule, className }: Props) {
           Defina data, canal e lembrete para o próximo contato com o cliente sobre o projeto de site.
         </p>
       </div>
-      <Button type="button" size="sm" onClick={onSchedule}>
+      <Button
+        type="button"
+        size="sm"
+        onClick={onSchedule}
+        disabled={!onSchedule}
+      >
         Agendar follow-up
       </Button>
     </div>

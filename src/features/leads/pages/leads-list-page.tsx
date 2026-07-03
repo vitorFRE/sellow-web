@@ -2,7 +2,7 @@ import * as React from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import type { OnChangeFn, PaginationState } from "@tanstack/react-table"
 
-import { getAdminForbiddenMessage, getApiErrorMessage } from "@/shared/lib/api-errors"
+import { getWorkspaceForbiddenMessage, getApiErrorMessage } from "@/shared/lib/api-errors"
 import {
   deleteLead,
   listLeads,
@@ -16,6 +16,9 @@ import { PromoteLeadDialog } from "@/features/leads/components/promote-lead-dial
 import { leadListFiltersToParams } from "@/features/leads/lib/lead-list-filters"
 import type { LeadListAdvancedFilterState } from "@/features/leads/lib/lead-list-filters"
 import { leadsListQueryKey } from "@/features/leads/queries/leads-query-keys"
+import { invalidateWorkspaceLeadsQueries } from "@/features/workspaces/lib/business-query-key"
+import { useActiveWorkspace } from "@/features/workspaces/hooks/use-active-workspace"
+import { useWorkspacePermissions } from "@/features/workspaces/hooks/use-workspace-permissions"
 import type { ImportReview, Lead } from "@/features/leads/types/lead"
 import {
   DEFAULT_LEAD_LIST_FILTER_STATE,
@@ -27,6 +30,8 @@ const IMPORTED_STATUS = "IMPORTED" as const
 
 export function LeadsListPage() {
   const queryClient = useQueryClient()
+  const { workspaceId } = useActiveWorkspace()
+  const { canWriteLeads, canDeleteLeads } = useWorkspacePermissions()
   const [appliedFilters, setAppliedFilters] = React.useState<LeadListFilterState>(
     () => ({ ...DEFAULT_LEAD_LIST_FILTER_STATE })
   )
@@ -69,13 +74,13 @@ export function LeadsListPage() {
 
   const listQueryKey = React.useMemo(
     () => [
-      ...leadsListQueryKey,
+      ...leadsListQueryKey(workspaceId ?? ""),
       "imported",
       pagination.pageIndex,
       pagination.pageSize,
       filterParams,
     ],
-    [pagination.pageIndex, pagination.pageSize, filterParams]
+    [workspaceId, pagination.pageIndex, pagination.pageSize, filterParams]
   )
 
   const query = useQuery({
@@ -86,12 +91,14 @@ export function LeadsListPage() {
         limit: pagination.pageSize,
         ...filterParams,
       }),
+    enabled: Boolean(workspaceId),
   })
 
   const deleteMutation = useMutation({
     mutationFn: deleteLead,
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["leads"] })
+      if (!workspaceId) return
+      await invalidateWorkspaceLeadsQueries(queryClient, workspaceId)
       const len = query.data?.data.length ?? 0
       if (len <= 1 && pagination.pageIndex > 0) {
         setPagination((p) => ({ ...p, pageIndex: p.pageIndex - 1 }))
@@ -103,7 +110,8 @@ export function LeadsListPage() {
     mutationFn: (id: string) => updateLeadStatus(id, { status: "NEW" }),
     onSuccess: async () => {
       setPromoteTarget(null)
-      await queryClient.invalidateQueries({ queryKey: ["leads"] })
+      if (!workspaceId) return
+      await invalidateWorkspaceLeadsQueries(queryClient, workspaceId)
       const len = query.data?.data.length ?? 0
       if (len <= 1 && pagination.pageIndex > 0) {
         setPagination((p) => ({ ...p, pageIndex: p.pageIndex - 1 }))
@@ -159,7 +167,8 @@ export function LeadsListPage() {
       }
     },
     onSettled: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["leads"] })
+      if (!workspaceId) return
+      await invalidateWorkspaceLeadsQueries(queryClient, workspaceId)
     },
   })
 
@@ -257,7 +266,7 @@ export function LeadsListPage() {
 
           {query.isError ? (
             <p className="pt-4 text-sm text-destructive">
-              {getAdminForbiddenMessage(
+              {getWorkspaceForbiddenMessage(
                 query.error,
                 query.error instanceof Error
                   ? query.error.message
@@ -281,6 +290,8 @@ export function LeadsListPage() {
               promotingLeadId={promotingLeadId}
               onImportReviewChange={onImportReviewChange}
               reviewingLeadId={reviewingLeadId}
+              canWriteLeads={canWriteLeads}
+              canDeleteLeads={canDeleteLeads}
               emptyMessage="Nenhum lead importado. Use Importar JSON para adicionar leads do Google Maps."
             />
           </div>

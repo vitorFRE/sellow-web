@@ -13,6 +13,7 @@ import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as DashboardTemplatesRouteImport } from './routes/dashboard/templates'
+import { Route as DashboardSelecionarWorkspaceRouteImport } from './routes/dashboard/selecionar-workspace'
 import { Route as DashboardRelatorioRouteImport } from './routes/dashboard/relatorio'
 import { Route as DashboardPropostasRouteImport } from './routes/dashboard/propostas'
 import { Route as DashboardPortfolioRouteImport } from './routes/dashboard/portfolio'
@@ -42,6 +43,12 @@ const DashboardTemplatesRoute = DashboardTemplatesRouteImport.update({
   path: '/templates',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
+const DashboardSelecionarWorkspaceRoute =
+  DashboardSelecionarWorkspaceRouteImport.update({
+    id: '/selecionar-workspace',
+    path: '/selecionar-workspace',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
 const DashboardRelatorioRoute = DashboardRelatorioRouteImport.update({
   id: '/relatorio',
   path: '/relatorio',
@@ -94,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/portfolio': typeof DashboardPortfolioRoute
   '/dashboard/propostas': typeof DashboardPropostasRoute
   '/dashboard/relatorio': typeof DashboardRelatorioRoute
+  '/dashboard/selecionar-workspace': typeof DashboardSelecionarWorkspaceRoute
   '/dashboard/templates': typeof DashboardTemplatesRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
@@ -107,6 +115,7 @@ export interface FileRoutesByTo {
   '/dashboard/portfolio': typeof DashboardPortfolioRoute
   '/dashboard/propostas': typeof DashboardPropostasRoute
   '/dashboard/relatorio': typeof DashboardRelatorioRoute
+  '/dashboard/selecionar-workspace': typeof DashboardSelecionarWorkspaceRoute
   '/dashboard/templates': typeof DashboardTemplatesRoute
   '/dashboard': typeof DashboardIndexRoute
 }
@@ -122,6 +131,7 @@ export interface FileRoutesById {
   '/dashboard/portfolio': typeof DashboardPortfolioRoute
   '/dashboard/propostas': typeof DashboardPropostasRoute
   '/dashboard/relatorio': typeof DashboardRelatorioRoute
+  '/dashboard/selecionar-workspace': typeof DashboardSelecionarWorkspaceRoute
   '/dashboard/templates': typeof DashboardTemplatesRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
@@ -138,6 +148,7 @@ export interface FileRouteTypes {
     | '/dashboard/portfolio'
     | '/dashboard/propostas'
     | '/dashboard/relatorio'
+    | '/dashboard/selecionar-workspace'
     | '/dashboard/templates'
     | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
@@ -151,6 +162,7 @@ export interface FileRouteTypes {
     | '/dashboard/portfolio'
     | '/dashboard/propostas'
     | '/dashboard/relatorio'
+    | '/dashboard/selecionar-workspace'
     | '/dashboard/templates'
     | '/dashboard'
   id:
@@ -165,6 +177,7 @@ export interface FileRouteTypes {
     | '/dashboard/portfolio'
     | '/dashboard/propostas'
     | '/dashboard/relatorio'
+    | '/dashboard/selecionar-workspace'
     | '/dashboard/templates'
     | '/dashboard/'
   fileRoutesById: FileRoutesById
@@ -202,6 +215,13 @@ declare module '@tanstack/react-router' {
       path: '/templates'
       fullPath: '/dashboard/templates'
       preLoaderRoute: typeof DashboardTemplatesRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/selecionar-workspace': {
+      id: '/dashboard/selecionar-workspace'
+      path: '/selecionar-workspace'
+      fullPath: '/dashboard/selecionar-workspace'
+      preLoaderRoute: typeof DashboardSelecionarWorkspaceRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/dashboard/relatorio': {
@@ -272,6 +292,7 @@ interface DashboardRouteRouteChildren {
   DashboardPortfolioRoute: typeof DashboardPortfolioRoute
   DashboardPropostasRoute: typeof DashboardPropostasRoute
   DashboardRelatorioRoute: typeof DashboardRelatorioRoute
+  DashboardSelecionarWorkspaceRoute: typeof DashboardSelecionarWorkspaceRoute
   DashboardTemplatesRoute: typeof DashboardTemplatesRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
@@ -285,6 +306,7 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardPortfolioRoute: DashboardPortfolioRoute,
   DashboardPropostasRoute: DashboardPropostasRoute,
   DashboardRelatorioRoute: DashboardRelatorioRoute,
+  DashboardSelecionarWorkspaceRoute: DashboardSelecionarWorkspaceRoute,
   DashboardTemplatesRoute: DashboardTemplatesRoute,
   DashboardIndexRoute: DashboardIndexRoute,
 }

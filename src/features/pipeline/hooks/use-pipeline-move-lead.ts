@@ -11,9 +11,12 @@ import {
   snapshotLeadsQueries,
 } from "@/features/pipeline/lib/apply-pipeline-optimistic-move"
 import { reconcilePipelineCacheWithServerLead } from "@/features/pipeline/lib/reconcile-pipeline-cache"
+import { pipelineBusinessPrefix } from "@/features/pipeline/queries/pipeline-query-keys"
+import { useActiveWorkspace } from "@/features/workspaces/hooks/use-active-workspace"
 
 export function usePipelineMoveLead(filters: LeadListFilterState) {
   const queryClient = useQueryClient()
+  const { workspaceId } = useActiveWorkspace()
 
   return useMutation({
     mutationFn: ({
@@ -28,14 +31,24 @@ export function usePipelineMoveLead(filters: LeadListFilterState) {
         lossReasonNote: status === "LOST" ? lossReasonNote : undefined,
       }),
     onMutate: async (variables) => {
-      await queryClient.cancelQueries({ queryKey: ["leads", "pipeline"] })
-      const previous = snapshotLeadsQueries(queryClient)
-      applyOptimisticPipelineMove(queryClient, variables, filters)
+      if (!workspaceId) return { previous: [] as ReturnType<typeof snapshotLeadsQueries> }
+      await queryClient.cancelQueries({
+        queryKey: pipelineBusinessPrefix(workspaceId),
+      })
+      const previous = snapshotLeadsQueries(queryClient, workspaceId)
+      applyOptimisticPipelineMove(
+        queryClient,
+        workspaceId,
+        variables,
+        filters
+      )
       return { previous }
     },
     onSuccess: (serverLead, variables) => {
+      if (!workspaceId) return
       reconcilePipelineCacheWithServerLead(
         queryClient,
+        workspaceId,
         serverLead,
         variables.status,
         filters

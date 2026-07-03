@@ -1,5 +1,5 @@
-import { settingsNavItems } from "@/features/settings/config/settings-nav"
 import type { SettingsSectionId } from "@/features/settings/config/settings-nav"
+import { useVisibleSettingsNavGroups } from "@/features/settings/hooks/use-visible-settings-nav-items"
 import { cn } from "@/lib/utils"
 
 type Props = {
@@ -7,29 +7,44 @@ type Props = {
 }
 
 export function SettingsMobileMenuList({ onSelect }: Props) {
+  const visibleGroups = useVisibleSettingsNavGroups()
+
   return (
     <nav aria-label="Áreas de configuração">
-      <p className="mb-4 text-[11px] font-medium tracking-[0.14em] text-stat-label uppercase">
+      <p className="mb-6 font-mono text-[10px] tracking-[0.16em] text-stat-label uppercase">
         Configurações
       </p>
-      <ul className="divide-y divide-border border-y border-border">
-        {settingsNavItems.map((item) => (
-          <li key={item.id}>
-            <button
-              type="button"
-              onClick={() => onSelect(item.id)}
-              className={cn(
-                "flex w-full items-center justify-between py-3.5 text-left text-sm font-medium text-stat-value transition-colors"
-              )}
+      <div>
+        {visibleGroups.map((group, index) => (
+          <div
+            key={group.id}
+            className={cn(index > 0 && "mt-8 border-t border-border pt-8")}
+          >
+            <p
+              className="mb-3 select-none font-mono text-[10px] tracking-[0.16em] text-stat-label/60 uppercase"
+              aria-hidden
             >
-              <span>{item.title}</span>
-              <span className="font-mono text-xs text-stat-muted" aria-hidden>
-                →
-              </span>
-            </button>
-          </li>
+              {group.label}
+            </p>
+            <ul className="divide-y divide-border border-y border-border">
+              {group.items.map((item) => (
+                <li key={item.id}>
+                  <button
+                    type="button"
+                    onClick={() => onSelect(item.id)}
+                    className="flex w-full items-center justify-between py-3.5 pl-1 text-left text-sm font-medium text-stat-value transition-colors"
+                  >
+                    <span>{item.title}</span>
+                    <span className="font-mono text-xs text-stat-muted" aria-hidden>
+                      →
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
         ))}
-      </ul>
+      </div>
     </nav>
   )
 }

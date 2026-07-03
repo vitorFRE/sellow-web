@@ -51,6 +51,8 @@ export type LeadsColumnsOptions = {
   promotingLeadId?: string | null
   onImportReviewChange?: (id: string, importReview: ImportReview | null) => void
   reviewingLeadId?: string | null
+  canWriteLeads?: boolean
+  canDeleteLeads?: boolean
 }
 
 export function createLeadsColumns(
@@ -64,6 +66,8 @@ export function createLeadsColumns(
     promotingLeadId,
     onImportReviewChange,
     reviewingLeadId,
+    canWriteLeads = true,
+    canDeleteLeads = true,
   } = options
 
   const columns: ColumnDef<Lead>[] = [
@@ -139,7 +143,7 @@ export function createLeadsColumns(
         return (
           <LeadImportReviewCell
             value={row.original.importReview}
-            disabled={rowBusy}
+            disabled={rowBusy || !canWriteLeads}
             isPending={busy}
             onChange={(next) => onImportReviewChange(row.original.id, next)}
           />
@@ -150,7 +154,7 @@ export function createLeadsColumns(
     })
   }
 
-  if (variant === "imported" && onPromoteToPipeline) {
+  if (variant === "imported" && onPromoteToPipeline && canWriteLeads) {
     columns.push({
       id: "promote",
       header: () => <ColHeader>Pipeline</ColHeader>,
@@ -180,22 +184,24 @@ export function createLeadsColumns(
     })
   }
 
-  columns.push({
-    id: "actions",
-    header: () => <span className="sr-only">Ações</span>,
-    cell: ({ row }) => (
-      <LeadsRowActions
-        lead={row.original}
-        onDelete={onDeleteLead}
-        disabled={
-          deletingLeadId === row.original.id ||
-          promotingLeadId === row.original.id
-        }
-      />
-    ),
-    enableSorting: false,
-    size: 40,
-  })
+  if (canDeleteLeads) {
+    columns.push({
+      id: "actions",
+      header: () => <span className="sr-only">Ações</span>,
+      cell: ({ row }) => (
+        <LeadsRowActions
+          lead={row.original}
+          onDelete={onDeleteLead}
+          disabled={
+            deletingLeadId === row.original.id ||
+            promotingLeadId === row.original.id
+          }
+        />
+      ),
+      enableSorting: false,
+      size: 40,
+    })
+  }
 
   return columns
 }

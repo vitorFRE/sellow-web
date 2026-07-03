@@ -1,14 +1,30 @@
 import { HttpError } from "@/shared/api/http-error"
 
-export const ADMIN_FORBIDDEN_MESSAGE =
-  "Acesso negado. Esta área é restrita a administradores."
+export const WORKSPACE_FORBIDDEN_MESSAGE =
+  "Você não tem permissão neste workspace."
+
+/** @deprecated Use isWorkspaceForbidden */
+export const ADMIN_FORBIDDEN_MESSAGE = WORKSPACE_FORBIDDEN_MESSAGE
 
 export function isHttpError(err: unknown): err is HttpError {
   return err instanceof HttpError
 }
 
-export function isAdminForbidden(err: unknown): boolean {
+export function isWorkspaceForbidden(err: unknown): boolean {
   return isHttpError(err) && err.status === 403
+}
+
+/** @deprecated Use isWorkspaceForbidden */
+export function isAdminForbidden(err: unknown): boolean {
+  return isWorkspaceForbidden(err)
+}
+
+export function isMissingWorkspaceHeader(err: unknown): boolean {
+  return (
+    isHttpError(err) &&
+    err.status === 400 &&
+    err.message.toLowerCase().includes("x-workspace-id")
+  )
 }
 
 export function getApiErrorMessage(err: unknown, fallback: string): string {
@@ -16,7 +32,18 @@ export function getApiErrorMessage(err: unknown, fallback: string): string {
   return fallback
 }
 
-export function getAdminForbiddenMessage(err: unknown, fallback: string): string {
-  if (isAdminForbidden(err)) return ADMIN_FORBIDDEN_MESSAGE
+export function getWorkspaceForbiddenMessage(
+  err: unknown,
+  fallback: string
+): string {
+  if (isWorkspaceForbidden(err)) return WORKSPACE_FORBIDDEN_MESSAGE
   return getApiErrorMessage(err, fallback)
+}
+
+/** @deprecated Use getWorkspaceForbiddenMessage */
+export function getAdminForbiddenMessage(
+  err: unknown,
+  fallback: string
+): string {
+  return getWorkspaceForbiddenMessage(err, fallback)
 }

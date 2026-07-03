@@ -14,15 +14,17 @@ import {
   PIPELINE_STATUSES,
 } from "@/features/pipeline/config/pipeline-columns"
 import { pipelineColumnQueryKey } from "@/features/pipeline/queries/pipeline-query-keys"
+import { useActiveWorkspace } from "@/features/workspaces/hooks/use-active-workspace"
 
 export function usePipelineBoardQueries(filters: LeadListFilterState) {
+  const { workspaceId } = useActiveWorkspace()
   const filterParams = leadListFiltersToParams(filters, {
     includeStatus: false,
   })
 
   const queries = useQueries({
     queries: PIPELINE_STATUSES.map((status) => ({
-      queryKey: pipelineColumnQueryKey(status, filters),
+      queryKey: pipelineColumnQueryKey(workspaceId ?? "", status, filters),
       queryFn: () =>
         listLeads({
           page: 1,
@@ -30,6 +32,7 @@ export function usePipelineBoardQueries(filters: LeadListFilterState) {
           status,
           ...filterParams,
         }),
+      enabled: Boolean(workspaceId),
       placeholderData: (previousData: LeadsListResponse | undefined) =>
         previousData,
     })),
@@ -54,5 +57,5 @@ export function usePipelineBoardQueries(filters: LeadListFilterState) {
   const isError = queries.some((q) => q.isError)
   const error = queries.find((q) => q.error)?.error
 
-  return { byStatus, metaByStatus, isError, error, queries }
+  return { byStatus, metaByStatus, isError, error, queries, workspaceId }
 }

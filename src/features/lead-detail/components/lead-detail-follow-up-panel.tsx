@@ -22,9 +22,14 @@ import type { LeadFollowUpView } from "@/features/lead-detail/types/lead-detail-
 type Props = {
   leadId: string
   className?: string
+  readOnly?: boolean
 }
 
-export function LeadDetailFollowUpPanel({ leadId, className }: Props) {
+export function LeadDetailFollowUpPanel({
+  leadId,
+  className,
+  readOnly = false,
+}: Props) {
   const followUpQuery = useLeadFollowUpQuery(leadId)
   const saveFollowUp = useSaveLeadFollowUpMutation(leadId)
   const deleteFollowUp = useDeleteLeadFollowUpMutation(leadId)
@@ -72,23 +77,27 @@ export function LeadDetailFollowUpPanel({ leadId, className }: Props) {
       ) : saved ? (
         <LeadDetailFollowUpSummaryCard
           followUp={saved}
-          onEdit={() => openDialog({ ...saved })}
-          onClear={handleClear}
+          onEdit={readOnly ? undefined : () => openDialog({ ...saved })}
+          onClear={readOnly ? undefined : handleClear}
           isClearing={deleteFollowUp.isPending}
         />
       ) : (
-        <LeadDetailFollowUpEmptyState onSchedule={() => openDialog(EMPTY_FOLLOW_UP)} />
+        <LeadDetailFollowUpEmptyState
+          onSchedule={readOnly ? undefined : () => openDialog(EMPTY_FOLLOW_UP)}
+        />
       )}
 
-      <LeadDetailFollowUpDialog
-        key={dialogKey}
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        initial={dialogInitial}
-        title={saved ? "Editar follow-up" : "Agendar follow-up"}
-        isSaving={saveFollowUp.isPending}
-        onSave={handleSave}
-      />
+      {!readOnly ? (
+        <LeadDetailFollowUpDialog
+          key={dialogKey}
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+          initial={dialogInitial}
+          title={saved ? "Editar follow-up" : "Agendar follow-up"}
+          isSaving={saveFollowUp.isPending}
+          onSave={handleSave}
+        />
+      ) : null}
     </section>
   )
 }
