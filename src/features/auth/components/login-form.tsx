@@ -5,7 +5,6 @@ import { useQueryClient } from "@tanstack/react-query"
 import { IconArrowRight } from "@tabler/icons-react"
 import { motion, useReducedMotion } from "motion/react"
 
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { login } from "@/features/auth/api/auth-api"
@@ -59,9 +58,9 @@ export function LoginForm() {
   const MotionDiv = reduce ? "div" : motion.div
 
   return (
-    <div className="w-full space-y-8">
+    <div className="w-full space-y-7">
       <MotionDiv
-        className="space-y-4"
+        className="space-y-2"
         {...(reduce
           ? {}
           : {
@@ -71,15 +70,12 @@ export function LoginForm() {
               variants: reveal,
             })}
       >
-        <Badge>Painel</Badge>
-        <div className="space-y-2">
-          <h1 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
-            Bem-vindo de volta
-          </h1>
-          <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
-            Entre com e-mail e senha para acessar leads, propostas e relatorios.
-          </p>
-        </div>
+        <h1 className="text-2xl font-semibold tracking-tight text-balance sm:text-[1.75rem]">
+          Bem-vindo de volta
+        </h1>
+        <p className="text-sm leading-relaxed text-muted-foreground lg:hidden">
+          Entre com e-mail e senha para acessar leads, propostas e relatórios.
+        </p>
       </MotionDiv>
 
       <form
@@ -171,7 +167,7 @@ export function LoginForm() {
         />
 
         {submitError ? (
-          <p className="rounded-3xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          <p className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
             {submitError}
           </p>
         ) : null}

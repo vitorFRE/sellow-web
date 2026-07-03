@@ -271,8 +271,21 @@
     isolation: isolate;
   }
 
+  .auth-brand-panel::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: radial-gradient(
+      ellipse 75% 55% at 22% 78%,
+      color-mix(in oklch, var(--primary) 9%, transparent),
+      transparent 58%
+    );
+  }
+
   .auth-backdrop {
-    position: fixed;
+    position: absolute;
     inset: 0;
     z-index: 0;
     overflow: hidden;
@@ -286,23 +299,35 @@
     height: 100%;
     max-width: none;
     object-fit: cover;
-    object-position: var(--pattern-position);
+    object-position: center;
     opacity: var(--pattern-opacity);
     filter: blur(var(--pattern-blur));
     transform: scale(var(--pattern-scale));
     mask-image: linear-gradient(
-      to right,
-      transparent 0%,
-      rgb(0 0 0 / 0.35) 18%,
-      rgb(0 0 0 / 0.8) 42%,
-      black 68%
+      to bottom,
+      rgb(0 0 0 / 0.9) 0%,
+      rgb(0 0 0 / 0.55) 55%,
+      transparent 100%
     );
     -webkit-mask-image: linear-gradient(
-      to right,
-      transparent 0%,
-      rgb(0 0 0 / 0.35) 18%,
-      rgb(0 0 0 / 0.8) 42%,
-      black 68%
+      to bottom,
+      rgb(0 0 0 / 0.9) 0%,
+      rgb(0 0 0 / 0.55) 55%,
+      transparent 100%
+    );
+  }
+
+  .auth-backdrop--subdued img {
+    opacity: calc(var(--pattern-opacity) * 0.28);
+    mask-image: radial-gradient(
+      ellipse 90% 70% at 50% 40%,
+      black 0%,
+      transparent 72%
+    );
+    -webkit-mask-image: radial-gradient(
+      ellipse 90% 70% at 50% 40%,
+      black 0%,
+      transparent 72%
     );
   }
 
@@ -311,19 +336,6 @@
       filter: none;
       transform: none;
     }
-  }
-
-  .auth-surface::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background: radial-gradient(
-      ellipse 80% 65% at 88% 50%,
-      color-mix(in oklch, var(--primary) 8%, transparent),
-      transparent 58%
-    );
   }
 }
 
