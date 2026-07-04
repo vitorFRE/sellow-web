@@ -234,9 +234,10 @@ export function FeedbackAdminFilters({
                 <span className={fieldLabelClass}>Workspace</span>
                 <Select
                   value={value.workspaceId}
-                  onValueChange={(next) =>
+                  onValueChange={(next) => {
+                    if (next == null) return
                     onChange({ ...value, workspaceId: next })
-                  }
+                  }}
                 >
                   <SelectTrigger className={fieldSelectTriggerClass} size="sm">
                     <SelectValue>
