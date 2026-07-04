@@ -44,7 +44,6 @@ export const dashboardSidebarData = {
     {
       title: "Feedback",
       icon: <IconMessageCircle />,
-      comingSoon: true,
     },
     {
       title: "Configurações",

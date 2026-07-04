@@ -1,6 +1,11 @@
-export type SettingsSectionId = "loss-reasons" | "members" | "workspaces-admin"
+export type SettingsSectionId =
+  | "loss-reasons"
+  | "members"
+  | "my-feedback"
+  | "workspaces-admin"
+  | "feedback-admin"
 
-export type SettingsNavGroupId = "workspace" | "platform"
+export type SettingsNavGroupId = "workspace" | "account" | "platform"
 
 export type SettingsNavItem = {
   id: SettingsSectionId
@@ -32,12 +37,27 @@ export const settingsNavGroups: SettingsNavGroup[] = [
     ],
   },
   {
+    id: "account",
+    label: "Conta",
+    items: [
+      {
+        id: "my-feedback",
+        title: "Meus feedbacks",
+      },
+    ],
+  },
+  {
     id: "platform",
     label: "Super admin",
     items: [
       {
         id: "workspaces-admin",
         title: "Workspaces",
+        requiresSuperAdmin: true,
+      },
+      {
+        id: "feedback-admin",
+        title: "Feedbacks",
         requiresSuperAdmin: true,
       },
     ],

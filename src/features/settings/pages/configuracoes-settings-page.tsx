@@ -8,6 +8,8 @@ import { MembersSection } from "@/features/settings/components/members-section/m
 import { SettingsConfigNav } from "@/features/settings/components/settings-config-nav"
 import { SettingsMobileMenuList } from "@/features/settings/components/settings-mobile-menu-list"
 import { WorkspacesAdminSection } from "@/features/settings/components/workspaces-admin-section/workspaces-admin-section"
+import { FeedbackMySection } from "@/features/settings/components/feedback-my-section"
+import { FeedbackAdminSection } from "@/features/settings/components/feedback-admin-section/feedback-admin-section"
 import type { SettingsSectionId } from "@/features/settings/config/settings-nav"
 import { useVisibleSettingsNavItems } from "@/features/settings/hooks/use-visible-settings-nav-items"
 import { useIsMobile } from "@/shared/hooks/use-mobile"
@@ -15,7 +17,9 @@ import { useIsMobile } from "@/shared/hooks/use-mobile"
 function renderSection(section: SettingsSectionId) {
   if (section === "loss-reasons") return <LossReasonsSection />
   if (section === "members") return <MembersSection />
+  if (section === "my-feedback") return <FeedbackMySection />
   if (section === "workspaces-admin") return <WorkspacesAdminSection />
+  if (section === "feedback-admin") return <FeedbackAdminSection />
   return null
 }
 

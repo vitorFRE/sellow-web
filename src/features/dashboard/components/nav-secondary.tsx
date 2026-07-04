@@ -15,6 +15,7 @@ export type NavSecondaryItem = {
   icon: React.ReactNode
   url?: string
   comingSoon?: boolean
+  onClick?: () => void
 }
 
 function linkFor(url: string) {
@@ -36,7 +37,7 @@ export function NavSecondary({
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              {item.comingSoon || !item.url ? (
+              {item.comingSoon ? (
                 <SidebarMenuButton
                   size="sm"
                   disabled
@@ -46,8 +47,22 @@ export function NavSecondary({
                   <span>{item.title}</span>
                   <ComingSoonBadge className="ml-auto" />
                 </SidebarMenuButton>
-              ) : (
+              ) : item.onClick ? (
+                <SidebarMenuButton
+                  size="sm"
+                  type="button"
+                  onClick={item.onClick}
+                >
+                  {item.icon}
+                  <span>{item.title}</span>
+                </SidebarMenuButton>
+              ) : item.url ? (
                 <SidebarMenuButton size="sm" render={linkFor(item.url)}>
+                  {item.icon}
+                  <span>{item.title}</span>
+                </SidebarMenuButton>
+              ) : (
+                <SidebarMenuButton size="sm" disabled>
                   {item.icon}
                   <span>{item.title}</span>
                 </SidebarMenuButton>
