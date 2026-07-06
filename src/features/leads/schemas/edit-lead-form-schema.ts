@@ -1,9 +1,8 @@
 import { z } from "zod"
 
-import { ALL_LEAD_STATUSES } from "@/features/leads/config/lead-status"
 import { optionalUrlSchema } from "@/features/leads/schemas/optional-url-schema"
 
-export const createLeadFormSchema = z.object({
+export const editLeadFormSchema = z.object({
   name: z.string().min(1, "Informe o nome."),
   email: z.union([z.literal(""), z.string().email("E-mail inválido.")]),
   phone: z.string(),
@@ -13,27 +12,27 @@ export const createLeadFormSchema = z.object({
       (s) => s.trim() === "" || /^-?\d+(\.\d+)?$/.test(s.trim()),
       "Orçamento inválido."
     ),
-  status: z.enum(ALL_LEAD_STATUSES),
   source: z.string(),
   city: z.string(),
   state: z.string(),
+  url: optionalUrlSchema,
   website: optionalUrlSchema,
   instagram: optionalUrlSchema,
   facebook: optionalUrlSchema,
   categoryName: z.string(),
 })
 
-export type CreateLeadFormValues = z.infer<typeof createLeadFormSchema>
+export type EditLeadFormValues = z.infer<typeof editLeadFormSchema>
 
-export const createLeadDefaultValues: CreateLeadFormValues = {
+export const editLeadDefaultValues: EditLeadFormValues = {
   name: "",
   email: "",
   phone: "",
   budget: "",
-  status: "NEW",
   source: "",
   city: "",
   state: "",
+  url: "",
   website: "",
   instagram: "",
   facebook: "",

@@ -29,6 +29,8 @@ export type Lead = {
   state?: string | null
   url?: string | null
   website?: string | null
+  instagram?: string | null
+  facebook?: string | null
   categoryName?: string | null
   googlePlaceId?: string | null
   importReview?: ImportReview | null

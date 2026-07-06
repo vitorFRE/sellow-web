@@ -13,6 +13,7 @@ import {
 import { reconcilePipelineCacheWithServerLead } from "@/features/pipeline/lib/reconcile-pipeline-cache"
 import { pipelineBusinessPrefix } from "@/features/pipeline/queries/pipeline-query-keys"
 import { useActiveWorkspace } from "@/features/workspaces/hooks/use-active-workspace"
+import { invalidateWorkspaceLeadsQueries } from "@/features/workspaces/lib/business-query-key"
 
 export function usePipelineMoveLead(filters: LeadListFilterState) {
   const queryClient = useQueryClient()
@@ -44,8 +45,12 @@ export function usePipelineMoveLead(filters: LeadListFilterState) {
       )
       return { previous }
     },
-    onSuccess: (serverLead, variables) => {
+    onSuccess: async (serverLead, variables) => {
       if (!workspaceId) return
+      if (variables.status === "IMPORTED") {
+        await invalidateWorkspaceLeadsQueries(queryClient, workspaceId)
+        return
+      }
       reconcilePipelineCacheWithServerLead(
         queryClient,
         workspaceId,

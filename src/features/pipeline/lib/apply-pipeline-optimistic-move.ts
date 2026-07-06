@@ -54,6 +54,13 @@ export function applyOptimisticPipelineMove(
   const lead = fromData.data.find((l) => l.id === id)
   if (!lead) return
 
+  queryClient.setQueryData<LeadsListResponse>(fromKey, {
+    data: fromData.data.filter((l) => l.id !== id),
+    meta: bumpLeadsListMeta(fromData.meta, -1),
+  })
+
+  if (toStatus === "IMPORTED") return
+
   const nextLead: Lead = {
     ...lead,
     status: toStatus,
@@ -65,11 +72,6 @@ export function applyOptimisticPipelineMove(
         }
       : { lossReasonId: null, lossReasonNote: null }),
   }
-
-  queryClient.setQueryData<LeadsListResponse>(fromKey, {
-    data: fromData.data.filter((l) => l.id !== id),
-    meta: bumpLeadsListMeta(fromData.meta, -1),
-  })
 
   const toKey = pipelineColumnQueryKey(workspaceId, toStatus, filters)
   const toData = queryClient.getQueryData<LeadsListResponse>(toKey)

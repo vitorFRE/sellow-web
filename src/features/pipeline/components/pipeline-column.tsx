@@ -17,6 +17,9 @@ type PipelineColumnProps = {
   isLoading: boolean
   onOpenLeadDetail?: (lead: Lead, columnStatus: LeadStatus) => void
   canDrag?: boolean
+  canWriteLeads?: boolean
+  onSendToImported?: (id: string, fromStatus: LeadStatus) => void
+  sendToImportedPendingId?: string | null
 }
 
 export function PipelineColumn({
@@ -27,6 +30,9 @@ export function PipelineColumn({
   isLoading,
   onOpenLeadDetail,
   canDrag = true,
+  canWriteLeads = false,
+  onSendToImported,
+  sendToImportedPendingId,
 }: PipelineColumnProps) {
   const { ref, isDropTarget } = useDroppable({ id: status })
   const total = meta?.total ?? leads.length
@@ -66,6 +72,9 @@ export function PipelineColumn({
               columnStatus={status}
               onOpenDetail={onOpenLeadDetail}
               canDrag={canDrag}
+              canWriteLeads={canWriteLeads}
+              onSendToImported={onSendToImported}
+              sendToImportedPendingId={sendToImportedPendingId}
             />
           ))
         )}

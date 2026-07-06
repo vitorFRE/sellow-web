@@ -184,7 +184,7 @@ export function createLeadsColumns(
     })
   }
 
-  if (canDeleteLeads) {
+  if (canWriteLeads || canDeleteLeads) {
     columns.push({
       id: "actions",
       header: () => <span className="sr-only">Ações</span>,
@@ -192,6 +192,8 @@ export function createLeadsColumns(
         <LeadsRowActions
           lead={row.original}
           onDelete={onDeleteLead}
+          canWriteLeads={canWriteLeads}
+          canDeleteLeads={canDeleteLeads}
           disabled={
             deletingLeadId === row.original.id ||
             promotingLeadId === row.original.id

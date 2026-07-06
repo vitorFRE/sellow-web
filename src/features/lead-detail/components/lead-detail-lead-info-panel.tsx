@@ -97,6 +97,8 @@ export function LeadDetailLeadInfoPanel({ lead, className }: Props) {
   const location = formatLeadLocation(lead)
   const mapsHref = normalizeLeadHref(lead.url)
   const websiteHref = normalizeLeadHref(lead.website)
+  const instagramHref = normalizeLeadHref(lead.instagram)
+  const facebookHref = normalizeLeadHref(lead.facebook)
   const scoreN =
     lead.totalScore != null && !Number.isNaN(Number(lead.totalScore))
       ? Number(lead.totalScore)
@@ -157,6 +159,26 @@ export function LeadDetailLeadInfoPanel({ lead, className }: Props) {
         <Row label="Site">
           {websiteHref ? (
             <LeadDetailExternalLink href={websiteHref} label={lead.website?.trim() || websiteHref} />
+          ) : (
+            "—"
+          )}
+        </Row>
+        <Row label="Instagram">
+          {instagramHref ? (
+            <LeadDetailExternalLink
+              href={instagramHref}
+              label={lead.instagram?.trim() || instagramHref}
+            />
+          ) : (
+            "—"
+          )}
+        </Row>
+        <Row label="Facebook">
+          {facebookHref ? (
+            <LeadDetailExternalLink
+              href={facebookHref}
+              label={lead.facebook?.trim() || facebookHref}
+            />
           ) : (
             "—"
           )}

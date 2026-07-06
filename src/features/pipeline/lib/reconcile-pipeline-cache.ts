@@ -32,6 +32,20 @@ export function reconcilePipelineCacheWithServerLead(
   destinationColumn: LeadStatus,
   filters: LeadListFilterState
 ): void {
+  if (serverLead.status === "IMPORTED") {
+    for (const status of PIPELINE_STATUSES) {
+      const key = pipelineColumnQueryKey(workspaceId, status, filters)
+      const data = queryClient.getQueryData<LeadsListResponse>(key)
+      if (!data?.data.some((l) => l.id === serverLead.id)) continue
+      queryClient.setQueryData<LeadsListResponse>(key, {
+        data: data.data.filter((l) => l.id !== serverLead.id),
+        meta: bumpLeadsListMeta(data.meta, -1),
+      })
+      break
+    }
+    return
+  }
+
   if (serverLead.status === destinationColumn) {
     replaceLeadInPipelineColumn(
       queryClient,

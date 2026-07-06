@@ -1,6 +1,6 @@
+import * as React from "react"
 import {
   IconAlertTriangle,
-  IconLink,
   IconMapPin,
   IconPhone,
   IconStar,
@@ -14,9 +14,9 @@ import {
 } from "@/components/ui/tooltip"
 import type { Lead } from "@/features/leads/types/lead"
 import {
-  leadLinkIconClass,
-  normalizeLeadHref,
-} from "@/features/leads/lib/lead-link-utils"
+  LeadCardExternalLinks,
+  leadHasExternalLinks,
+} from "@/features/leads/components/lead-card-external-links"
 import { formatDateTimeShortPt } from "@/shared/lib/format-datetime"
 import {
   formatLeadLocation,
@@ -34,9 +34,11 @@ function stopDrag(e: { stopPropagation: () => void }) {
 export function PipelineLeadCardContent({
   lead,
   className,
+  trailing,
 }: {
   lead: Lead
   className?: string
+  trailing?: React.ReactNode
 }) {
   const location = formatLeadLocation(lead)
   const updated = formatDateTimeShortPt(lead.updatedAt)
@@ -47,9 +49,7 @@ export function PipelineLeadCardContent({
   const tier = leadScoreTier(scoreN)
   const category = lead.categoryName?.trim() || "Lead"
   const lossReason = lead.lossReason?.trim() || null
-  const websiteHref = normalizeLeadHref(lead.website)
-  const mapsHref = normalizeLeadHref(lead.url)
-  const hasLinks = Boolean(websiteHref || mapsHref)
+  const hasLinks = leadHasExternalLinks(lead)
   const hasMeta = Boolean(
     lead.phone?.trim() || location || lead.source || scoreN != null
   )
@@ -100,40 +100,17 @@ export function PipelineLeadCardContent({
           ) : null}
         </div>
 
-        {hasLinks ? (
+        {trailing || hasLinks ? (
           <div
             className="flex shrink-0 items-center gap-0.5"
             role="toolbar"
             aria-label="Ações do lead"
+            data-pipeline-card-interactive
+            onPointerDown={stopDrag}
+            onClick={stopDrag}
           >
-            {websiteHref ? (
-              <a
-                href={websiteHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={cn(leadLinkIconClass, "size-7")}
-                aria-label="Abrir site"
-                title="Abrir site"
-                onPointerDown={stopDrag}
-                onClick={stopDrag}
-              >
-                <IconLink className="size-3.5" aria-hidden />
-              </a>
-            ) : null}
-            {mapsHref ? (
-              <a
-                href={mapsHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={cn(leadLinkIconClass, "size-7")}
-                aria-label="Abrir no Google Maps"
-                title="Abrir no Google Maps"
-                onPointerDown={stopDrag}
-                onClick={stopDrag}
-              >
-                <IconMapPin className="size-3.5" aria-hidden />
-              </a>
-            ) : null}
+            {trailing}
+            <LeadCardExternalLinks lead={lead} stopInteraction={stopDrag} />
           </div>
         ) : null}
       </div>

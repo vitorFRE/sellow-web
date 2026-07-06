@@ -11,6 +11,8 @@ export type CreateLeadRequestBody = {
   city?: string
   state?: string
   website?: string
+  instagram?: string
+  facebook?: string
   categoryName?: string
 }
 
@@ -54,6 +56,12 @@ export function buildCreateLeadBody(
 
   const website = trimOrUndef(v.website)
   if (website) body.website = website
+
+  const instagram = trimOrUndef(v.instagram)
+  if (instagram) body.instagram = instagram
+
+  const facebook = trimOrUndef(v.facebook)
+  if (facebook) body.facebook = facebook
 
   const categoryName = trimOrUndef(v.categoryName)
   if (categoryName) body.categoryName = categoryName

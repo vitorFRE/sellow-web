@@ -156,3 +156,31 @@ export async function createLead(body: CreateLeadRequestBody): Promise<Lead> {
   const parsed = await parseApiJson<Lead | { data: Lead }>(res)
   return unwrapLeadResponse(parsed)
 }
+
+export type UpdateLeadBody = {
+  name?: string
+  email?: string | null
+  phone?: string | null
+  budget?: number | null
+  source?: string | null
+  city?: string | null
+  state?: string | null
+  url?: string | null
+  website?: string | null
+  instagram?: string | null
+  facebook?: string | null
+  categoryName?: string | null
+}
+
+export async function updateLead(
+  id: string,
+  body: UpdateLeadBody
+): Promise<Lead> {
+  const res = await authorizedFetch(`${getApiBaseUrl()}/leads/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  })
+  const parsed = await parseApiJson<Lead | { data: Lead }>(res)
+  return unwrapLeadResponse(parsed)
+}

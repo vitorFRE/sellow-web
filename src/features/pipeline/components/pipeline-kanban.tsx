@@ -123,6 +123,19 @@ export function PipelineKanban({ filters }: Props) {
     [lostPending, moveLead]
   )
 
+  const handleSendToImported = React.useCallback(
+    (id: string, fromStatus: LeadStatus) => {
+      if (!canWriteLeads) return
+      moveLead.mutate({ id, status: "IMPORTED", fromStatus })
+    },
+    [canWriteLeads, moveLead]
+  )
+
+  const sendToImportedPendingId =
+    moveLead.isPending && moveLead.variables?.status === "IMPORTED"
+      ? moveLead.variables.id
+      : null
+
   return (
     <DragDropProvider onDragEnd={onDragEnd}>
       <div className="flex h-full min-h-0 min-w-0 w-full flex-col overflow-hidden">
@@ -137,6 +150,9 @@ export function PipelineKanban({ filters }: Props) {
               isLoading={queries[i]?.isLoading ?? false}
               onOpenLeadDetail={openLeadDetail}
               canDrag={canWriteLeads}
+              canWriteLeads={canWriteLeads}
+              onSendToImported={handleSendToImported}
+              sendToImportedPendingId={sendToImportedPendingId}
             />
           ))}
         </div>
