@@ -29,7 +29,7 @@ export function PipelineToolbar({
         applied={applied}
         onSearchChange={onSearchChange}
         onApplyAdvanced={onApplyAdvanced}
-        panelTitle="Refinar pipeline"
+        panelTitle="Filtros"
       />
     </div>
   )

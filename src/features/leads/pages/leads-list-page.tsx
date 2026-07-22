@@ -12,6 +12,8 @@ import {
 import { LeadListFiltersPanel } from "@/features/leads/components/lead-list-filters-panel"
 import { ImportedLeadsHeader } from "@/features/leads/components/imported-leads-header"
 import { LeadsDataTable } from "@/features/leads/components/leads-data-table"
+import { LeadsMapView } from "@/features/leads/components/leads-map-view"
+import type { LeadsViewMode } from "@/features/leads/components/leads-view-toggle"
 import { PromoteLeadDialog } from "@/features/leads/components/promote-lead-dialog"
 import { leadListFiltersToParams } from "@/features/leads/lib/lead-list-filters"
 import type { LeadListAdvancedFilterState } from "@/features/leads/lib/lead-list-filters"
@@ -39,6 +41,7 @@ export function LeadsListPage() {
     pageIndex: 0,
     pageSize: 20,
   })
+  const [viewMode, setViewMode] = React.useState<LeadsViewMode>("list")
   const [promoteTarget, setPromoteTarget] = React.useState<Lead | null>(null)
 
   const filterParams = React.useMemo(
@@ -72,23 +75,27 @@ export function LeadsListPage() {
     []
   )
 
+  const listPageSize = viewMode === "map" ? 100 : pagination.pageSize
+  const listPageIndex = viewMode === "map" ? 0 : pagination.pageIndex
+
   const listQueryKey = React.useMemo(
     () => [
       ...leadsListQueryKey(workspaceId ?? ""),
       "imported",
-      pagination.pageIndex,
-      pagination.pageSize,
+      viewMode,
+      listPageIndex,
+      listPageSize,
       filterParams,
     ],
-    [workspaceId, pagination.pageIndex, pagination.pageSize, filterParams]
+    [workspaceId, viewMode, listPageIndex, listPageSize, filterParams]
   )
 
   const query = useQuery({
     queryKey: listQueryKey,
     queryFn: () =>
       listLeads({
-        page: pagination.pageIndex + 1,
-        limit: pagination.pageSize,
+        page: listPageIndex + 1,
+        limit: listPageSize,
         ...filterParams,
       }),
     enabled: Boolean(workspaceId),
@@ -222,11 +229,14 @@ export function LeadsListPage() {
     <div className="mx-auto flex w-full min-w-0 max-w-6xl flex-col pb-4">
       <DashboardReveal>
         <section className="dashboard-stat-board flex min-w-0 flex-col p-6">
-          <ImportedLeadsHeader />
+          <ImportedLeadsHeader
+            viewMode={viewMode}
+            onViewModeChange={setViewMode}
+          />
 
           <LeadListFiltersPanel
             applied={appliedFilters}
-            panelTitle="Refinar importados"
+            panelTitle="Filtros"
             showImportReviewFilter
             className="border-b border-border"
             onSearchChange={(search) =>
@@ -276,24 +286,37 @@ export function LeadsListPage() {
           ) : null}
 
           <div className="pt-2">
-            <LeadsDataTable
-              data={query.data?.data ?? []}
-              isLoading={query.isPending}
-              total={total}
-              pageCount={totalPages}
-              pagination={pagination}
-              onPaginationChange={onPaginationChange}
-              onDeleteLead={onDeleteLead}
-              deletingLeadId={deletingLeadId}
-              variant="imported"
-              onPromoteToPipeline={onPromoteToPipeline}
-              promotingLeadId={promotingLeadId}
-              onImportReviewChange={onImportReviewChange}
-              reviewingLeadId={reviewingLeadId}
-              canWriteLeads={canWriteLeads}
-              canDeleteLeads={canDeleteLeads}
-              emptyMessage="Nenhum lead importado. Use Importar JSON para adicionar leads do Google Maps."
-            />
+            {viewMode === "map" ? (
+              <LeadsMapView
+                leads={query.data?.data ?? []}
+                isLoading={query.isPending}
+                canWriteLeads={canWriteLeads}
+                canDeleteLeads={canDeleteLeads}
+                promotingLeadId={promotingLeadId}
+                deletingLeadId={deletingLeadId}
+                onPromoteToPipeline={onPromoteToPipeline}
+                onDeleteLead={onDeleteLead}
+              />
+            ) : (
+              <LeadsDataTable
+                data={query.data?.data ?? []}
+                isLoading={query.isPending}
+                total={total}
+                pageCount={totalPages}
+                pagination={pagination}
+                onPaginationChange={onPaginationChange}
+                onDeleteLead={onDeleteLead}
+                deletingLeadId={deletingLeadId}
+                variant="imported"
+                onPromoteToPipeline={onPromoteToPipeline}
+                promotingLeadId={promotingLeadId}
+                onImportReviewChange={onImportReviewChange}
+                reviewingLeadId={reviewingLeadId}
+                canWriteLeads={canWriteLeads}
+                canDeleteLeads={canDeleteLeads}
+                emptyMessage="Nenhum lead importado. Use Importar para adicionar leads do Google Maps."
+              />
+            )}
           </div>
         </section>
       </DashboardReveal>

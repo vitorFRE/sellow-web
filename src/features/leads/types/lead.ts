@@ -27,6 +27,8 @@ export type Lead = {
   reviewsCount?: number | null
   city?: string | null
   state?: string | null
+  latitude?: number | null
+  longitude?: number | null
   url?: string | null
   website?: string | null
   instagram?: string | null

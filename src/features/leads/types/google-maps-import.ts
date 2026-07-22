@@ -12,6 +12,8 @@ export type GoogleMapsImportItem = {
   categories?: string[]
   categoryName?: string | null
   url?: string | null
+  latitude?: number | null
+  longitude?: number | null
 }
 
 export type GoogleMapsImportPayload = {

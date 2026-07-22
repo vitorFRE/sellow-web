@@ -8,12 +8,12 @@ import { invalidateWorkspaceLeadsQueries } from "@/features/workspaces/lib/busin
 import { useActiveWorkspace } from "@/features/workspaces/hooks/use-active-workspace"
 import {
   ImportGoogleMapsActions,
-  ImportGoogleMapsHeader,
   ImportItemsPreview,
   ImportJsonSource,
   ImportResultDialog,
   ImportStepPanel,
 } from "@/features/leads/components/import-google-maps"
+import { ImportApifyFormatHint } from "@/features/leads/components/import-google-maps/import-apify-format-hint"
 import { parseGoogleMapsImportJson } from "@/features/leads/lib/parse-google-maps-json"
 import type { GoogleMapsImportResult } from "@/features/leads/types/google-maps-import"
 
@@ -28,7 +28,7 @@ function ImportAlert({ children }: { children: React.ReactNode }) {
   )
 }
 
-export function ImportGoogleMapsPage() {
+export function JsonImportPanel() {
   const router = useRouter()
   const queryClient = useQueryClient()
   const { workspaceId } = useActiveWorkspace()
@@ -73,14 +73,14 @@ export function ImportGoogleMapsPage() {
   const canImport = parsed.ok && !mutation.isPending
 
   return (
-    <div className="mx-auto flex w-full min-w-0 max-w-3xl flex-col gap-10 pb-12">
-      <ImportGoogleMapsHeader />
-
+    <>
       <div className="flex flex-col gap-6">
+        <ImportApifyFormatHint />
+
         <ImportStepPanel
           step={1}
           title="Cole ou carregue o JSON"
-          description="Array ou objeto com lista de itens no formato esperado pela API."
+          description="Array ou objeto com lista de itens no formato esperado pela API. Até 500 itens."
         >
           <div className="flex flex-col gap-4">
             <ImportJsonSource value={text} onChange={setJsonText} />
@@ -126,6 +126,6 @@ export function ImportGoogleMapsPage() {
           skipped={result.skipped}
         />
       ) : null}
-    </div>
+    </>
   )
 }
