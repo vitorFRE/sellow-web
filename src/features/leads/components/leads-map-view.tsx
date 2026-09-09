@@ -62,7 +62,7 @@ function FlyToSelected({
   const lastIdRef = React.useRef<string | null>(null)
 
   React.useEffect(() => {
-    if (!isLoaded) return
+    if (!isLoaded || !map) return
     if (lastIdRef.current === selectedId) return
     lastIdRef.current = selectedId
 

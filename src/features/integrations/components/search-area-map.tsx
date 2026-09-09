@@ -49,7 +49,7 @@ function MapPickCenter({
   const handlePick = useEffectEvent(onPick)
 
   React.useEffect(() => {
-    if (!isLoaded || disabled) return
+    if (!isLoaded || !map || disabled) return
 
     const onClick = (event: MapMouseEvent) => {
       handlePick(event.lngLat.lat, event.lngLat.lng)
@@ -79,7 +79,7 @@ function MapFitToRadius({
   const prevRadiusRef = React.useRef<number | null>(null)
 
   React.useEffect(() => {
-    if (!isLoaded) return
+    if (!isLoaded || !map) return
     if (prevRadiusRef.current === radiusMeters) return
     prevRadiusRef.current = radiusMeters
 
@@ -108,7 +108,7 @@ function MapRecenter({
   const lastKeyRef = React.useRef(0)
 
   React.useEffect(() => {
-    if (!isLoaded || recenterKey === 0) return
+    if (!isLoaded || !map || recenterKey === 0) return
     if (lastKeyRef.current === recenterKey) return
     lastKeyRef.current = recenterKey
 
